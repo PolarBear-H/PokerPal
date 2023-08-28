@@ -1,17 +1,18 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, TextInput, TouchableOpacity, LogBox, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, LogBox } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import { useRoute } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { showMessage } from 'react-native-flash-message';
+import SelectDropdown from 'react-native-select-dropdown';
 
 import Score from '../Components/Score';
 import { format } from 'date-fns';
 import { useScoreContext } from '../Components/ScoreManager';
 import { Utils } from '../Components/Utils';
-import { Picker } from '@react-native-picker/picker';
-import { showMessage } from 'react-native-flash-message';
+
 
 const RecordScorePage: React.FC = () => {
     LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
@@ -41,6 +42,8 @@ const RecordScorePage: React.FC = () => {
     const [showEndDatePicker, setShowEndDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const { scoreHistory, setScoreHistory } = useScoreContext(); // Use the context
+
+    const blindLever = ["1/1", "1/2", "3/5", "5/10", "10/20", "25/50", "50/100", "100/200"]
 
     // Calculate the duration in hours
     const durationInHours = (new Date(score.endDate).getTime() - new Date(score.startDate).getTime()) / (1000 * 60 * 60) - score.breakTime;
@@ -102,14 +105,12 @@ const RecordScorePage: React.FC = () => {
             });
 
             // Show a success message
-            const message = scoreData ? 'Session record is updated successfully.' : 'Session record is saved successfully.';
-            if (scoreData) {
-                showMessage({
-                    message: message,
-                    type: "success",
-                    floating: true,
-                });
-            }
+            const message = scoreData ? 'Session record is updated successfully.' : 'Session record is added successfully.';
+            showMessage({
+                message: message,
+                type: "success",
+                floating: true,
+            });
 
             if (navigation.canGoBack()) {
                 navigation.goBack();
@@ -191,6 +192,28 @@ const RecordScorePage: React.FC = () => {
                         />
                         <Text style={{fontSize:18}}> hours</Text>
                         </>
+                    ) : (title === 'Blind Level') ? (
+                        <SelectDropdown
+                            data={blindLever}
+                            defaultValue={value}
+                            onSelect={(selectedItem: string) => onChangeText(selectedItem)}
+                            defaultButtonText={'Select Blind'}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                return selectedItem;
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                return item;
+                            }}
+                            buttonStyle={styles.dropdownBtnStyle}
+                            buttonTextStyle={styles.dropdownBtnTxtStyle}
+                            renderDropdownIcon={isOpened => {
+                                return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#CCC'} size={18} />;
+                            }}
+                            dropdownIconPosition={'right'}
+                            dropdownStyle={styles.dropdownDropdownStyle}
+                            rowStyle={styles.dropdownRowStyle}
+                            rowTextStyle={styles.dropdownRowTxtStyle}
+                        />
                     ) : (
                         <TextInput
                             style={styles.propertyValue}
@@ -295,6 +318,25 @@ const styles = StyleSheet.create({
         backgroundColor: '#ccc',
         overflow: 'hidden',
     },
+    dropdownBtnStyle: {
+        width: '100%',
+        height: 40,
+        backgroundColor: 'white',
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+    dropdownBtnTxtStyle: {color: 'black', textAlign: 'right'},
+    dropdownDropdownStyle: {
+        backgroundColor: '#EFEFEF',
+        borderRadius: 4,
+    },
+    dropdownRowStyle: {
+        backgroundColor: '#EFEFEF', 
+        borderBottomColor: '#C5C5C5',
+        borderRadius: 4,
+    },
+    dropdownRowTxtStyle: {color: 'black', textAlign: 'left'},
 });
 
 export default RecordScorePage;
