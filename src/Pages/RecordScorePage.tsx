@@ -11,12 +11,14 @@ import { format } from 'date-fns';
 import { useScoreContext } from '../Components/ScoreManager';
 import { Utils } from '../Components/Utils';
 import { Picker } from '@react-native-picker/picker';
+import { showMessage } from 'react-native-flash-message';
 
 const RecordScorePage: React.FC = () => {
-    const navigation = useNavigation<any>();
     LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
+
+    const navigation = useNavigation<any>();
     const route = useRoute(); // Get the route object
-    // Use optional chaining and provide a default value
+
     let scoreData: any;
     if (route && route?.params) {
         scoreData = 'item' in route?.params ? route.params.item : {};
@@ -45,6 +47,23 @@ const RecordScorePage: React.FC = () => {
     const durationFormatted = Utils.getFormettedDuration(durationInHours);
     const chipsWon = score.remainingBalance - score.buyInAmount;;
     
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <TouchableOpacity onPress={() => {if (navigation.canGoBack()) navigation.goBack()}}>
+                    <Text style={styles.headerButton}>Cancel</Text>
+                </TouchableOpacity>
+            ),
+            headerRight: () => (
+                <TouchableOpacity onPress={handleSave}>
+                    <Text style={styles.headerButton}>Save</Text>
+                </TouchableOpacity>
+            ),
+            headerTitle: scoreData ? 'Session Record' :'New Record',
+            headerTitleStyle: {fontSize: 22},
+        });
+    }, [navigation, score]);
+
     const handleSave = async () => {
         try {
             // Update the score history array with the new record
@@ -82,35 +101,26 @@ const RecordScorePage: React.FC = () => {
                 duration: 0,
             });
 
+            // Show a success message
+            const message = scoreData ? 'Session record is updated successfully.' : 'Session record is saved successfully.';
+            if (scoreData) {
+                showMessage({
+                    message: message,
+                    type: "success",
+                    floating: true,
+                });
+            }
+
             if (navigation.canGoBack()) {
                 navigation.goBack();
             } 
             
-            // Optionally, show a success message to the user
-            // Alert.alert('Success', 'Game score saved successfully');
         } catch (error) {
             // Handle any errors that occur during the save process
             // You can show an error message to the user
             // Alert.alert('Error', 'Failed to save game score');
         }
     };    
-
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerLeft: () => (
-                <TouchableOpacity onPress={() => {if (navigation.canGoBack()) navigation.goBack()}}>
-                    <Text style={styles.headerButton}>Cancel</Text>
-                </TouchableOpacity>
-            ),
-            headerRight: () => (
-                <TouchableOpacity onPress={handleSave}>
-                    <Text style={styles.headerButton}>Save</Text>
-                </TouchableOpacity>
-            ),
-            headerTitle: scoreData ? 'Poker Record' :'New Record',
-            headerTitleStyle: {fontSize: 22},
-        });
-    }, [navigation, score]);
     
     const renderPropertyRow = (title: string, value: string, onChangeText: (text: any) => void) => {
         const openDatePicker = () => {

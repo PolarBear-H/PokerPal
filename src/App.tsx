@@ -12,6 +12,7 @@ import { ScoreProvider, useScoreContext } from './Components/ScoreManager';
 import { Utils } from './Components/Utils';
 import DiceRollScreen from './Pages/DiceRollScreen';
 import PreflopWinRateCalculator from './Components/PreflopWinRateCalculator';
+import FlashMessage from 'react-native-flash-message';
 
 const RootStack = createStackNavigator();
 
@@ -23,6 +24,7 @@ const Main = () => {
   }, []);
 
   return (
+    <>
     <NavigationContainer>
       <RootStack.Navigator
           initialRouteName="MainTabNavigator"
@@ -49,6 +51,8 @@ const Main = () => {
         />
       </RootStack.Navigator>
     </NavigationContainer>
+    <FlashMessage position="top" statusBarHeight={64} />
+    </>
   );
 }
 

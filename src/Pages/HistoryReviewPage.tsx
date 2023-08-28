@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         marginLeft: 8,
         padding: 8,
-        width: '100%',
+        width: '97%',
     },
     dateContainer: {
         flexDirection: 'row',
@@ -359,8 +359,8 @@ const styles = StyleSheet.create({
         marginLeft: 8,
     },
     checkbox: {
-        width: 20,
-        height: 20,
+        width: 25,
+        height: 25,
     },
 });
 
