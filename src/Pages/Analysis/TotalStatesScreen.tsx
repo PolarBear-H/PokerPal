@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useScoreContext } from '../../Components/ScoreManager';
 import { Utils } from '../../Components/Utils';
 import Score from '../../Components/Score';
+import Localization from '../../Components/Localization';
+import { useLanguageContext } from '../../Components/LanguageManager';
 
 const TotalStatsScreen: React.FC = () => {
     const [totalProfit, setTotalProfit] = useState(0);
@@ -11,6 +13,7 @@ const TotalStatsScreen: React.FC = () => {
     const [totalHands, setTotalHands] = useState(0);
     const [totalWins, setTotalWins] = useState(0);
     const { scoreHistory } = useScoreContext();
+    const { language } = useLanguageContext();
 
     const calculateTotalStats = async (scoreHistory: Score[]) => {
         try {
@@ -46,7 +49,7 @@ const TotalStatsScreen: React.FC = () => {
 
     useEffect(() => {
         calculateTotalStats(scoreHistory);
-    }, [scoreHistory]);
+    }, [scoreHistory, language]);
 
     let hourlyProfit = totalProfit / totalDuration;
     let perHandProfit = totalProfit / totalHands;
@@ -66,7 +69,7 @@ const TotalStatsScreen: React.FC = () => {
         <View style={styles.container}>
         <View style={styles.statsContainer}>
             <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Total Profit:</Text>
+            <Text style={styles.statsLabel}>{Localization.totalProfit}:</Text>
             <Text
                 style={[
                 styles.statsValue,
@@ -78,7 +81,7 @@ const TotalStatsScreen: React.FC = () => {
             </View>
             <View style={styles.separator} />
             <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Hourly Profit (¥/h):</Text>
+            <Text style={styles.statsLabel}>{Localization.hourlyProfit}:</Text>
             <Text
                 style={[
                 styles.statsValue,
@@ -90,7 +93,7 @@ const TotalStatsScreen: React.FC = () => {
             </View>
             <View style={styles.separator} />
             <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Session Avg. Profit:</Text>
+            <Text style={styles.statsLabel}>{Localization.sessionAvgProfit}:</Text>
             <Text
                 style={[
                 styles.statsValue,
@@ -102,12 +105,12 @@ const TotalStatsScreen: React.FC = () => {
             </View>
             <View style={styles.separator} />
             <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Total Duration:</Text>
+            <Text style={styles.statsLabel}>{Localization.totalDuration}:</Text>
             <Text style={styles.statsValue}>{Utils.getFormettedDuration(totalDuration)}</Text>
             </View>
             <View style={styles.separator} />
             <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Win Rate:</Text>
+            <Text style={styles.statsLabel}>{Localization.winRate}:</Text>
             <Text style={styles.statsValue}>{totalWins}/{totalHands} ({totalWinRate.toFixed(2)}%)</Text>
             </View>
         </View>

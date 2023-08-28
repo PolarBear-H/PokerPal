@@ -5,6 +5,8 @@ import Score from '../../Components/Score';
 import { format } from 'date-fns';
 import { useScoreContext } from '../../Components/ScoreManager';
 import { Utils } from '../../Components/Utils';
+import Localization from '../../Components/Localization';
+import { useLanguageContext } from '../../Components/LanguageManager';
 
 interface MonthlyStats {
     month: string;
@@ -18,6 +20,7 @@ interface MonthlyStats {
 const MonthlyStatsScreen: React.FC = () => {
     const [monthlyStats, setMonthlyStats] = useState<MonthlyStats[]>([]);
     const { scoreHistory } = useScoreContext();
+    const { language } = useLanguageContext();
     const [showTotalDuration, setShowTotalDuration] = useState(false); 
 
     useEffect(() => {
@@ -33,7 +36,7 @@ const MonthlyStatsScreen: React.FC = () => {
         };
 
         fetchData();
-    }, [scoreHistory]);
+    }, [scoreHistory, language]);
 
     const calculateMonthlyStats = (scoreHistory: Score[]): MonthlyStats[] => {
         const monthlyStatsMap: Map<string, MonthlyStats> = new Map();
@@ -112,10 +115,10 @@ const MonthlyStatsScreen: React.FC = () => {
     return (
         <View style={styles.container}>
         <View style={styles.header}>
-            <Text style={styles.headerLabel}>Month</Text>
-            <Text style={styles.headerLabel}>Profit</Text>
-            <Text style={styles.headerLabel}>{showTotalDuration ? 'Duration' : 'Profit/h'}</Text>
-            <Text style={styles.headerLabel}>{showTotalDuration ? 'Sessions' : 'Profit/s'}</Text>
+            <Text style={styles.headerLabel}>{Localization.month}</Text>
+            <Text style={styles.headerLabel}>{Localization.profit}</Text>
+            <Text style={styles.headerLabel}>{showTotalDuration ? Localization.duration : Localization.hourlyProfitShort}</Text>
+            <Text style={styles.headerLabel}>{showTotalDuration ? Localization.sessions : Localization.SessionAvgProfitShort}</Text>
         </View>
         <View style={styles.separator} />
         <FlatList

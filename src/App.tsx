@@ -10,9 +10,8 @@ import MainTabNavigator from './Navigator/MainTabNavigator';
 import { Image, LogBox, TouchableHighlight, View } from 'react-native';
 import { ScoreProvider, useScoreContext } from './Components/ScoreManager';
 import { Utils } from './Components/Utils';
-import DiceRollScreen from './Pages/DiceRollScreen';
-import PreflopWinRateCalculator from './Components/PreflopWinRateCalculator';
 import FlashMessage from 'react-native-flash-message';
+import { LanguageProvider } from './Components/LanguageManager';
 
 const RootStack = createStackNavigator();
 
@@ -59,9 +58,11 @@ const Main = () => {
 export default function App() {
   return (
       <SafeAreaProvider>
-        <ScoreProvider>
-          <Main />
-        </ScoreProvider>
+        <LanguageProvider>
+          <ScoreProvider>
+            <Main />
+          </ScoreProvider>
+        </LanguageProvider>
       </SafeAreaProvider>
   );
 };

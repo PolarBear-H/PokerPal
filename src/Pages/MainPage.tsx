@@ -6,12 +6,15 @@ import Score from '../Components/Score';
 import { format } from 'date-fns';
 import { Utils } from '../Components/Utils';
 import { useNavigation } from '@react-navigation/native';
+import Localization from '../Components/Localization';
+import { useLanguageContext } from '../Components/LanguageManager';
 
 const MainPage: React.FC = () => {
   const navigation = useNavigation<any>();
     const [recentGame, setRecentGame] = useState<Score|null>(null);
     const [totalProfit, setTotalProfit] = useState<number>(0);
     const { scoreHistory } = useScoreContext();
+    const { language } = useLanguageContext();
 
     useEffect(() => {
         async function fetchRecentGame() {
@@ -27,7 +30,7 @@ const MainPage: React.FC = () => {
         }
 
         fetchRecentGame();
-    }, [scoreHistory]);
+    }, [scoreHistory, language]);
 
     const totalProfitLabel = totalProfit >= 0 ? "Total Profit" : "Total Loss";
     const totalProfitColor = totalProfit > 0 ? 'green' : totalProfit == 0 ? 'black' : '#DD3E35';
@@ -35,21 +38,21 @@ const MainPage: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-              <Text style={[styles.totalProfit, { color: totalProfitColor }]}>{totalProfitLabel}: ¥{totalProfit.toFixed(2)}</Text>
+              <Text style={[styles.totalProfit, { color: totalProfitColor }]}>{Localization.totalProfit}: ¥{totalProfit.toFixed(2)}</Text>
             </View>
             <View style={styles.content}>
               {recentGame && (
                   <View style={styles.recentGame}>
-                      <Text style={styles.recentGameTitle}>Recent Session</Text>
-                      <Text style={styles.recentGameDetails}>Date: {format(new Date(recentGame?.startDate), 'yyyy-MM-dd')}</Text>
-                      <Text style={styles.recentGameDetails}>Profit: ¥{recentGame?.chipsWon}</Text>
-                      <Text style={styles.recentGameDetails}>Duration: {Utils.getFormettedDuration(recentGame?.duration)} </Text>
+                      <Text style={styles.recentGameTitle}>{Localization.recentSession}</Text>
+                      <Text style={styles.recentGameDetails}>{Localization.date}: {format(new Date(recentGame?.startDate), 'yyyy-MM-dd')}</Text>
+                      <Text style={styles.recentGameDetails}>{Localization.profit}: ¥{recentGame?.chipsWon}</Text>
+                      <Text style={styles.recentGameDetails}>{Localization.duration}: {Utils.getFormettedDuration(recentGame?.duration)} </Text>
                   </View>
               )}
             </View>
             <View style={styles.buttonContent}>
               <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('RecordScorePage')}>
-                <Text style={styles.addButtonLabel}>Add</Text>
+                <Text style={styles.addButtonLabel}>{Localization.add}</Text>
               </TouchableOpacity>
             </View>
         </View>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -7,6 +7,8 @@ import TotalStatsScreen from './Analysis/TotalStatesScreen';
 import MonthlyStatsScreen from './Analysis/MonthlyStatsScreen';
 import WeeklyStatsScreen from './Analysis/WeeklyStatsScreen';
 import ChartStatsScreen from './Analysis/ChartStatsScreen';
+import Localization from '../Components/Localization';
+import { useLanguageContext } from '../Components/LanguageManager';
 
 const Tab = createMaterialTopTabNavigator();
   
@@ -18,18 +20,22 @@ const StatsTabNavigator = () => {
                 tabBarStyle: { borderRadius: 8, marginBottom: 4}, // Adjust the tab bar background color
             }}
         >
-            <Tab.Screen name="Total" component={TotalStatsScreen} />
+            <Tab.Screen name={Localization.total} component={TotalStatsScreen} />
             <Tab.Screen 
-                name="Month" 
+                name={Localization.month}
                 component={MonthlyStatsScreen} 
                 />
-            <Tab.Screen name="Week" component={WeeklyStatsScreen} />
-            <Tab.Screen name="Charts" component={ChartStatsScreen} />
+            <Tab.Screen name={Localization.week} component={WeeklyStatsScreen} />
         </Tab.Navigator>
     );
 };
 
 const StatisticsPage: React.FC = () => {
+    const {language, setLanguage} = useLanguageContext();
+    
+    useEffect(() => {
+    }, [language]);
+    
     return (
         <View style={styles.container}>
             <StatsTabNavigator />

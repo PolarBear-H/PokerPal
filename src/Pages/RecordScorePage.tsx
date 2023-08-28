@@ -12,6 +12,7 @@ import Score from '../Components/Score';
 import { format } from 'date-fns';
 import { useScoreContext } from '../Components/ScoreManager';
 import { Utils } from '../Components/Utils';
+import Localization from '../Components/Localization';
 
 
 const RecordScorePage: React.FC = () => {
@@ -54,15 +55,15 @@ const RecordScorePage: React.FC = () => {
         navigation.setOptions({
             headerLeft: () => (
                 <TouchableOpacity onPress={() => {if (navigation.canGoBack()) navigation.goBack()}}>
-                    <Text style={styles.headerButton}>Cancel</Text>
+                    <Text style={styles.headerButton}>{Localization.cancel}</Text>
                 </TouchableOpacity>
             ),
             headerRight: () => (
                 <TouchableOpacity onPress={handleSave}>
-                    <Text style={styles.headerButton}>Save</Text>
+                    <Text style={styles.headerButton}>{Localization.save}</Text>
                 </TouchableOpacity>
             ),
-            headerTitle: scoreData ? 'Session Record' :'New Record',
+            headerTitle: scoreData ? Localization.sessionRecord : Localization.newRecord,
             headerTitleStyle: {fontSize: 22},
         });
     }, [navigation, score]);
@@ -105,7 +106,7 @@ const RecordScorePage: React.FC = () => {
             });
 
             // Show a success message
-            const message = scoreData ? 'Session record is updated successfully.' : 'Session record is added successfully.';
+            const message = scoreData ? Localization.sessionUpdateMessage : Localization.sessionAddMessage;
             showMessage({
                 message: message,
                 type: "success",
@@ -126,18 +127,18 @@ const RecordScorePage: React.FC = () => {
     const renderPropertyRow = (title: string, value: string, onChangeText: (text: any) => void) => {
         const openDatePicker = () => {
             setShowTimePicker(false);
-            if (title === 'Start Time') {
+            if (title === Localization.startTime) {
                 setShowStartDatePicker(true);
-            } else if (title === 'End Time') {
+            } else if (title === Localization.endTime) {
                 setShowEndDatePicker(true);
             }
         };
 
         const openTimePicker = () => {
             setShowTimePicker(true);
-            if (title === 'Start Time') {
+            if (title === Localization.startTime) {
                 setShowStartDatePicker(true);
-            } else if (title === 'End Time') {
+            } else if (title === Localization.endTime) {
                 setShowEndDatePicker(true);
             }
         };
@@ -147,7 +148,7 @@ const RecordScorePage: React.FC = () => {
                 <View style={styles.propertyRow}>
                     <Text style={styles.propertyTitle}>{title}</Text>
                     <View style={styles.propertyRight}>
-                    {(title === 'Start Time' || title === 'End Time') ? (
+                    {(title === Localization.startTime || title === Localization.endTime) ? (
                         <>
                         <TouchableOpacity onPress={openDatePicker}>
                             <Text style={styles.propertyTimeValue}>{format(new Date(value), 'yyyy/MM/dd')}</Text>
@@ -157,7 +158,7 @@ const RecordScorePage: React.FC = () => {
                         </TouchableOpacity>
                         <DatePicker
                             modal
-                            open={(title === 'Start Time') ? showStartDatePicker : showEndDatePicker}
+                            open={(title === Localization.startTime) ? showStartDatePicker : showEndDatePicker}
                             date={new Date(value)}
                             mode= {showTimePicker ? 'time' : 'date'}
                             theme="light"
@@ -165,7 +166,7 @@ const RecordScorePage: React.FC = () => {
                             onConfirm={(newDate) => {
                                 setShowStartDatePicker(false);
                                 setShowEndDatePicker(false);
-                                if (title === 'Start Time') {
+                                if (title === Localization.startTime) {
                                     setScore({ ...score, startDate: newDate, endDate: newDate });
                                 } else {
                                     setScore({ ...score, endDate: newDate });
@@ -177,11 +178,11 @@ const RecordScorePage: React.FC = () => {
                             }}
                         />
                         </>
-                    ) : (title === 'Duration' || title === 'Profit') ? (
+                    ) : (title === Localization.duration || title === Localization.profit) ? (
                         <Text style={styles.propertyValue}>
                             {value.toString()}
                         </Text>
-                    ) : (title === 'Break Time') ? (
+                    ) : (title === Localization.breakTime) ? (
                         <>
                         <TextInput
                             style={styles.propertyValue}
@@ -192,12 +193,12 @@ const RecordScorePage: React.FC = () => {
                         />
                         <Text style={{fontSize:18}}> hours</Text>
                         </>
-                    ) : (title === 'Blind Level') ? (
+                    ) : (title === Localization.blindLevel) ? (
                         <SelectDropdown
                             data={blindLever}
                             defaultValue={value}
                             onSelect={(selectedItem: string) => onChangeText(selectedItem)}
-                            defaultButtonText={'Select Blind'}
+                            defaultButtonText={Localization.selectBlindLevel}
                             buttonTextAfterSelection={(selectedItem, index) => {
                                 return selectedItem;
                             }}
@@ -241,16 +242,16 @@ const RecordScorePage: React.FC = () => {
                     contentContainerStyle={styles.scrollContainer}
                     keyboardShouldPersistTaps="handled"
                 >
-                    {renderPropertyRow('Start Time', new Date(score.startDate).toISOString(), () => {})}
-                    {renderPropertyRow('End Time', new Date(score.endDate).toISOString(), () => {})}
-                    {renderPropertyRow('Break Time', score.breakTime, (text) => setScore({ ...score, breakTime: text }))}
-                    {renderPropertyRow('Duration', durationFormatted, () => {})}
-                    {renderPropertyRow('Blind Level', score.betUnit, (text) => setScore({ ...score, betUnit: text }))}
-                    {renderPropertyRow('Location', score.location, (text) => setScore({ ...score, location: text }))}
-                    {renderPropertyRow('Player Count', score.playerCount, (text) => setScore({ ...score, playerCount: text }))}
-                    {renderPropertyRow('Buy-In', score.buyInAmount, (text) => setScore({ ...score, buyInAmount: text }))}
-                    {renderPropertyRow('Cash-Out', score.remainingBalance, (text) => setScore({ ...score, remainingBalance: text }))}
-                    {renderPropertyRow('Profit', `${score.remainingBalance - score.buyInAmount}`, () => {})}
+                    {renderPropertyRow(Localization.startTime, new Date(score.startDate).toISOString(), () => {})}
+                    {renderPropertyRow(Localization.endTime, new Date(score.endDate).toISOString(), () => {})}
+                    {renderPropertyRow(Localization.breakTime, score.breakTime, (text) => setScore({ ...score, breakTime: text }))}
+                    {renderPropertyRow(Localization.duration, durationFormatted, () => {})}
+                    {renderPropertyRow(Localization.blindLevel, score.betUnit, (text) => setScore({ ...score, betUnit: text }))}
+                    {renderPropertyRow(Localization.location, score.location, (text) => setScore({ ...score, location: text }))}
+                    {renderPropertyRow(Localization.playerCount, score.playerCount, (text) => setScore({ ...score, playerCount: text }))}
+                    {renderPropertyRow(Localization.buyIn, score.buyInAmount, (text) => setScore({ ...score, buyInAmount: text }))}
+                    {renderPropertyRow(Localization.cashOut, score.remainingBalance, (text) => setScore({ ...score, remainingBalance: text }))}
+                    {renderPropertyRow(Localization.profit, `${score.remainingBalance - score.buyInAmount}`, () => {})}
                 </ScrollView>
             </KeyboardAvoidingView>
         </View>

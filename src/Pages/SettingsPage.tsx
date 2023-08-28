@@ -1,90 +1,140 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SwipeListView } from 'react-native-swipe-list-view';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { showMessage } from 'react-native-flash-message'; // 用于显示提示信息
+import Localization from '../Components/Localization';
+import { useLanguageContext } from '../Components/LanguageManager';
+import SelectDropdown from 'react-native-select-dropdown';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-type Item = {
-  key: string;
-  text: string;
-};
+const SettingsPage = () => {
+  const {language, setLanguage} = useLanguageContext();
 
-const data: Item[] = [
-  { key: '1', text: 'Item 1' },
-  { key: '2', text: 'Item 2' },
-  { key: '3', text: 'Item 3' },
-];
+  const [exportData, setExportData] = useState(false);
+  const [importData, setImportData] = useState(false);
+  const [currency, setCurrency] = useState('USD');
+  const [defaultBlind, setDefaultBlind] = useState('');
+  const [defaultLocation, setDefaultLocation] = useState('');
 
-const StatisticsPage: React.FC = () => {
-  const [listData, setListData] = React.useState(data);
-
-  const handleDelete = (rowKey: string) => {
-    const newData = [...listData];
-    const index = newData.findIndex((item) => item.key === rowKey);
-    newData.splice(index, 1);
-    setListData(newData);
+  const languageMapping =  {
+    [Localization.english]: 'en',
+    [Localization.chinese]: 'zh'
   };
 
-  //console.log('StatisticsPage');
+  const handleLanguageChange = (value:any) => {
+    const languageValue = languageMapping[value];
+    Localization.setLanguage(languageValue); // 切换语言
+    setLanguage(languageValue);
+  };
+  
+  const handleExportData = () => {
+    // 实现导出数据的逻辑
+    showMessage({
+      message: 'Data exported successfully',
+      type: 'success',
+      floating: true,
+    });
+  };
+
+  const handleImportData = () => {
+    // 实现导入数据的逻辑
+    showMessage({
+      message: 'Data imported successfully',
+      type: 'success',
+      floating: true,
+    });
+  };
+
+  const handleCurrencyChange = (selectedCurrency: any) => {
+    setCurrency(selectedCurrency);
+    // 实现更新货币设置的逻辑
+  };
+
+  const handleDefaultBlindChange = (value:any) => {
+    setDefaultBlind(value);
+    // 实现更新默认盲注设置的逻辑
+  };
+
+  const handleDefaultLocationChange = (value:any) => {
+    setDefaultLocation(value);
+    // 实现更新默认地点设置的逻辑
+  };
+
   return (
     <View style={styles.container}>
-      <SwipeListView
-        data={listData}
-        renderItem={({ item }) => (
-          <View style={styles.rowFront}>
-            <Text>{item.text}</Text>
-          </View>
-        )}
-        renderHiddenItem={({ item }) => (
-          <View style={styles.rowBack}>
-            <TouchableOpacity
-              style={[styles.backRightBtn, styles.backRightBtnRight]}
-              onPress={() => handleDelete(item.key)}
-            >
-              <Text style={styles.backTextWhite}>删除</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        rightOpenValue={-75}
-      />
+      <Text style={styles.sectionTitle}>{Localization.language}</Text>
+      <View style={styles.sectionContent}>
+      <SelectDropdown
+        data={Object.keys(languageMapping)}
+        defaultValue={language}
+        onSelect={(selectedItem: string) => handleLanguageChange(selectedItem)}
+        buttonTextAfterSelection={(selectedItem, index) => {
+            return selectedItem;
+        }}
+        rowTextForSelection={(item, index) => {
+            return item;
+        }}
+        buttonStyle={styles.dropdownBtnStyle}
+        buttonTextStyle={styles.dropdownBtnTxtStyle}
+        renderDropdownIcon={isOpened => {
+            return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#CCC'} size={18} />;
+        }}
+        dropdownIconPosition={'right'}
+        dropdownStyle={styles.dropdownDropdownStyle}
+        rowStyle={styles.dropdownRowStyle}
+        rowTextStyle={styles.dropdownRowTxtStyle}
+    />
+      </View>
+
+      {/* 其他设置项类似，使用相应的组件和逻辑 */}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f0f0f0',
     flex: 1,
+    padding: 16,
   },
-  rowFront: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderBottomColor: '#f0f0f0',
-    borderBottomWidth: 1,
-    justifyContent: 'center',
-    height: 50,
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 12,
   },
-  rowBack: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    flex: 1,
+  sectionContent: {
+    marginBottom: 24,
+  },
+  languageOption: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingLeft: 15,
-  },
-  backRightBtn: {
     alignItems: 'center',
-    bottom: 0,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    width: 75,
+    marginBottom: 8,
   },
-  backRightBtnRight: {
-    backgroundColor: '#ff0000',
-    right: 0,
+  languageText: {
+    fontSize: 18,
   },
-  backTextWhite: {
-    color: '#ffffff',
-  },
+  dropdownBtnStyle: {
+    width: '100%',
+    height: 40,
+    backgroundColor: 'white',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#ccc',
+},
+dropdownBtnTxtStyle: {color: 'black', textAlign: 'right'},
+dropdownDropdownStyle: {
+    backgroundColor: '#EFEFEF',
+    borderRadius: 4,
+},
+dropdownRowStyle: {
+    backgroundColor: '#EFEFEF', 
+    borderBottomColor: '#C5C5C5',
+    borderRadius: 4,
+},
+dropdownRowTxtStyle: {color: 'black', textAlign: 'left'},
+scrollContainer: {
+    flexGrow: 1,
+},
+  // 其他样式...
 });
 
-export default StatisticsPage;
+export default SettingsPage;

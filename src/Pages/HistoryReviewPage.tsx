@@ -11,10 +11,13 @@ import { useScoreContext } from '../Components/ScoreManager';
 import { Utils } from '../Components/Utils';
 import AntDesign from 'react-native-vector-icons/AntDesign'; 
 import CheckBox from '@react-native-community/checkbox';
+import Localization from '../Components/Localization';
+import { useLanguageContext } from '../Components/LanguageManager';
 
 const HistoryReviewPage: React.FC = () => {
     const navigation = useNavigation<any>();
     const { scoreHistory, setScoreHistory } = useScoreContext();
+    const { language } = useLanguageContext();
     
     const [yearTabs, setYearTabs] = useState<string[]>(['All']);
     const [monthTabs, setMonthTabs] = useState<string[]>(['All']);
@@ -27,7 +30,7 @@ const HistoryReviewPage: React.FC = () => {
     useEffect(() => {
         generateTabs();
         getFilteredScores();
-    }, [scoreHistory]);
+    }, [scoreHistory, language]);
 
     useLayoutEffect(() => {
         if (editMode)  {
@@ -40,7 +43,7 @@ const HistoryReviewPage: React.FC = () => {
                             setSelectedItems([]);
                         }}
                     >
-                        <Text style={styles.editButton}>Cancel</Text>
+                        <Text style={styles.editButton}>{Localization.cancel}</Text>
                     </TouchableOpacity>
                 ),
                 headerRight: () => (
@@ -55,7 +58,7 @@ const HistoryReviewPage: React.FC = () => {
                             }
                         }} 
                     >
-                        <Text style={styles.editButton}>{selectedItems.length==0 ? 'Done' : 'Delete'}</Text>
+                        <Text style={styles.editButton}>{selectedItems.length==0 ? Localization.done : Localization.delete}</Text>
                     </TouchableOpacity>
                 ),
             });
@@ -74,7 +77,7 @@ const HistoryReviewPage: React.FC = () => {
                         style={styles.headerButton}
                         onPress={() => setEditMode(true)} 
                     >
-                        <Text style={styles.editButton}>Edit</Text>
+                        <Text style={styles.editButton}>{Localization.edit}</Text>
                     </TouchableOpacity>
                 ),
             });
@@ -124,11 +127,11 @@ const HistoryReviewPage: React.FC = () => {
             'Are you sure you want to delete the record(s)?',
             [
                 {
-                    text: 'Cancel',
+                    text: Localization.cancel,
                     style: 'cancel',
                 },
                 {
-                    text: 'Delete',
+                    text: Localization.delete,
                     style: 'destructive',
                     onPress: async () => {
                         let updatedScoreHistory;
@@ -179,7 +182,7 @@ const HistoryReviewPage: React.FC = () => {
                             <Text style={styles.weekdayText}>{Utils.getWeekday(new Date(item.startDate))}</Text>
                         </View>
                         <Text style={styles.infoText}>
-                            Duration: {Utils.getFormettedDuration(item.duration)}
+                            {Localization.duration}: {Utils.getFormettedDuration(item.duration)}
                         </Text>
                     </View>
                     <View style={styles.infoRightContainer}>
