@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, LogBox } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, LogBox, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
@@ -43,7 +43,7 @@ const RecordScorePage: React.FC = () => {
     const [showTimePicker, setShowTimePicker] = useState(false);
     const { scoreHistory, setScoreHistory } = useScoreContext(); // Use the context
 
-    const blindLever = ["1/1", "1/2", "3/5", "5/10", "10/20", "25/50", "50/100", "100/200"]
+    const blindLever = ["¥1/¥1", "¥1/¥2", "¥3/¥5", "¥5/¥10", "¥10/¥20", "¥25/¥50", "¥50/¥100", "¥100/¥200"]
 
     // Calculate the duration in hours
     const durationInHours = (new Date(score.endDate).getTime() - new Date(score.startDate).getTime()) / (1000 * 60 * 60) - score.breakTime;
@@ -231,18 +231,29 @@ const RecordScorePage: React.FC = () => {
     };
 
     return (
-            <View style={styles.container}>
-                {renderPropertyRow('Start Time', new Date(score.startDate).toISOString(), () => {})}
-                {renderPropertyRow('End Time', new Date(score.endDate).toISOString(), () => {})}
-                {renderPropertyRow('Break Time', score.breakTime, (text) => setScore({ ...score, breakTime: text }))}
-                {renderPropertyRow('Duration', durationFormatted, () => {})}
-                {renderPropertyRow('Buy-In', score.buyInAmount, (text) => setScore({ ...score, buyInAmount: text }))}
-                {renderPropertyRow('Cash-Out', score.remainingBalance, (text) => setScore({ ...score, remainingBalance: text }))}
-                {renderPropertyRow('Profit', `${score.remainingBalance - score.buyInAmount}`, () => {})}
-                {renderPropertyRow('Blind Level', score.betUnit, (text) => setScore({ ...score, betUnit: text }))}
-                {renderPropertyRow('Location', score.location, (text) => setScore({ ...score, location: text }))}
-                {renderPropertyRow('Player Count', score.playerCount, (text) => setScore({ ...score, playerCount: text }))}
-            </View>
+        <View style={styles.container}>
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={'position'}
+                keyboardVerticalOffset={50} // Adjust the value as needed
+            >
+                <ScrollView
+                    contentContainerStyle={styles.scrollContainer}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    {renderPropertyRow('Start Time', new Date(score.startDate).toISOString(), () => {})}
+                    {renderPropertyRow('End Time', new Date(score.endDate).toISOString(), () => {})}
+                    {renderPropertyRow('Break Time', score.breakTime, (text) => setScore({ ...score, breakTime: text }))}
+                    {renderPropertyRow('Duration', durationFormatted, () => {})}
+                    {renderPropertyRow('Blind Level', score.betUnit, (text) => setScore({ ...score, betUnit: text }))}
+                    {renderPropertyRow('Location', score.location, (text) => setScore({ ...score, location: text }))}
+                    {renderPropertyRow('Player Count', score.playerCount, (text) => setScore({ ...score, playerCount: text }))}
+                    {renderPropertyRow('Buy-In', score.buyInAmount, (text) => setScore({ ...score, buyInAmount: text }))}
+                    {renderPropertyRow('Cash-Out', score.remainingBalance, (text) => setScore({ ...score, remainingBalance: text }))}
+                    {renderPropertyRow('Profit', `${score.remainingBalance - score.buyInAmount}`, () => {})}
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </View>
     );
 };
 
@@ -337,6 +348,9 @@ const styles = StyleSheet.create({
         borderRadius: 4,
     },
     dropdownRowTxtStyle: {color: 'black', textAlign: 'left'},
+    scrollContainer: {
+        flexGrow: 1,
+    },
 });
 
 export default RecordScorePage;
