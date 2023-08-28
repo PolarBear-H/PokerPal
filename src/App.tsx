@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -10,14 +10,18 @@ import MainTabNavigator from './Navigator/MainTabNavigator';
 import { Image, LogBox, TouchableHighlight, View } from 'react-native';
 import { ScoreProvider, useScoreContext } from './Components/ScoreManager';
 import { Utils } from './Components/Utils';
+import DiceRollScreen from './Pages/DiceRollScreen';
+import PreflopWinRateCalculator from './Components/PreflopWinRateCalculator';
 
 const RootStack = createStackNavigator();
 
 const Main = () => {
   const { setScoreHistory } = useScoreContext();
-  Utils.fetchScoreHistory(setScoreHistory);
-  LogBox.ignoreLogs(['Sending...']);
-  
+
+  useEffect(() => {
+    Utils.fetchScoreHistory(setScoreHistory);
+  }, []);
+
   return (
     <NavigationContainer>
       <RootStack.Navigator

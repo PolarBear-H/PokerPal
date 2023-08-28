@@ -12,7 +12,7 @@ const TotalStatsScreen: React.FC = () => {
     const [totalWins, setTotalWins] = useState(0);
     const { scoreHistory } = useScoreContext();
 
-    const calculateTotalStats = (scoreHistory: Score[]) => {
+    const calculateTotalStats = async (scoreHistory: Score[]) => {
         try {
             if (scoreHistory) {
                 let totalProfit = 0;
@@ -21,7 +21,7 @@ const TotalStatsScreen: React.FC = () => {
                 let totalWins = 0;
 
                 scoreHistory.forEach((score:any) => {
-                    const chipsWon = parseInt(score.chipsWon);
+                    const chipsWon = parseFloat(score.chipsWon);
                     const duration = parseFloat(score.duration);
                     const isWin = chipsWon >= 0;
                     totalProfit += chipsWon;
@@ -30,13 +30,14 @@ const TotalStatsScreen: React.FC = () => {
                     if (isWin) {
                         totalWins += 1;
                     }
-                    //console.log("totalProfit: " + totalProfit + "chipsWon: " + chipsWon);
                 });
 
                 setTotalProfit(totalProfit);
                 setTotalDuration(totalDuration);
                 setTotalHands(totalHands);
                 setTotalWins(totalWins);
+
+                await AsyncStorage.setItem('totalProfit', totalProfit.toString());
             }
         } catch (error) {
             console.error('Error calculating total stats:', error);
@@ -59,6 +60,8 @@ const TotalStatsScreen: React.FC = () => {
         totalWinRate = 0;
     }
 
+    const totalProfitColor = totalProfit > 0 ? 'green' : totalProfit == 0 ? 'grey' : 'red';
+
     return (
         <View style={styles.container}>
         <View style={styles.statsContainer}>
@@ -67,7 +70,7 @@ const TotalStatsScreen: React.FC = () => {
             <Text
                 style={[
                 styles.statsValue,
-                totalProfit >= 0 ? styles.profitText : styles.lossText,
+                {color: totalProfitColor}
                 ]}
             >
                 ¥{totalProfit.toFixed(2)}
@@ -75,11 +78,11 @@ const TotalStatsScreen: React.FC = () => {
             </View>
             <View style={styles.separator} />
             <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Hourly Profit(¥/h):</Text>
+            <Text style={styles.statsLabel}>Hourly Profit (¥/h):</Text>
             <Text
                 style={[
                 styles.statsValue,
-                hourlyProfit >= 0 ? styles.profitText : styles.lossText,
+                {color: totalProfitColor}
                 ]}
             >
                 ¥{hourlyProfit.toFixed(2)}
@@ -87,11 +90,11 @@ const TotalStatsScreen: React.FC = () => {
             </View>
             <View style={styles.separator} />
             <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Per Game Profit:</Text>
+            <Text style={styles.statsLabel}>Session Avg. Profit:</Text>
             <Text
                 style={[
                 styles.statsValue,
-                perHandProfit >= 0 ? styles.profitText : styles.lossText,
+                {color: totalProfitColor}
                 ]}
             >
                 ¥{perHandProfit.toFixed(2)}
@@ -100,11 +103,11 @@ const TotalStatsScreen: React.FC = () => {
             <View style={styles.separator} />
             <View style={styles.statsRow}>
             <Text style={styles.statsLabel}>Total Duration:</Text>
-            <Text style={styles.statsValue}>{totalDuration.toFixed(2)} hours</Text>
+            <Text style={styles.statsValue}>{Utils.getFormettedDuration(totalDuration)}</Text>
             </View>
             <View style={styles.separator} />
             <View style={styles.statsRow}>
-            <Text style={styles.statsLabel}>Total Win Rate:</Text>
+            <Text style={styles.statsLabel}>Win Rate:</Text>
             <Text style={styles.statsValue}>{totalWins}/{totalHands} ({totalWinRate.toFixed(2)}%)</Text>
             </View>
         </View>
@@ -117,6 +120,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,  
         backgroundColor: 'white',
+        borderRadius: 8,
     },
     statsContainer: {
         flex: 1,
@@ -136,14 +140,6 @@ const styles = StyleSheet.create({
     statsLabel: {
         fontWeight: 'bold',
         fontSize: 18,
-    },
-    profitText: {
-        color: 'green',
-        fontSize: 20,
-    },
-    lossText: {
-        color: 'red',
-        fontSize: 20,
     },
     statsValue: {
         fontSize: 20,

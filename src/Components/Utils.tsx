@@ -22,4 +22,20 @@ export class Utils {
         const weekdayIndex = date.getDay();
         return weekdays[weekdayIndex];
     };
+
+    public static getFormettedDuration(durationInHours: number) {
+        const hours = Math.floor(durationInHours);
+        const minutes = Math.round((durationInHours - hours) * 60);
+        const durationFormatted = `${hours} h ${minutes} m`;
+        return durationFormatted;
+    };
+
+    public static calculateTotalProfit(scoreHistory: Score[]) {
+        let totalProfit = 0;
+        scoreHistory.forEach((score:any) => {
+            const chipsWon = parseFloat(score.chipsWon);
+            totalProfit += chipsWon;
+        });
+        return totalProfit;
+    };
 }

@@ -11,10 +11,6 @@ const ChartStatsScreen: React.FC = () => {
     const { scoreHistory, setScoreHistory } = useScoreContext();
 
     useEffect(() => {
-        Utils.fetchScoreHistory(setScoreHistory);
-    }, []);
-
-    useEffect(() => {
         if (scoreHistory.length > 0) {
             calculateWinRates(scoreHistory);
         }
@@ -23,26 +19,19 @@ const ChartStatsScreen: React.FC = () => {
     const calculateWinRates = (scores: Score[]) => {
         const winRateData: number[] = [];
         let totalWins = 0;
-        let totalHands = 0;
-
-        for (const score of scores) {
+        const reversedScores = scoreHistory.slice().reverse();
+        for (const score of reversedScores) {
             const chipsWon = parseInt(score.chipsWon);
-            const isWin = chipsWon >= 0;
-
-            if (isWin) {
-                totalWins++;
-            }
-            totalHands++;
-
-            const winRate = (totalWins / totalHands) * 100;
-            winRateData.push(winRate);
+            
+            totalWins += chipsWon;
+            winRateData.push(totalWins);
         }
 
         setWinRates(winRateData);
     };
 
     const chartData = {
-        labels: scoreHistory.map(score => format(new Date(score.startDate), 'yyyy/MM/dd')),
+        labels: scoreHistory.map(score => format(new Date(score.startDate), 'MM/dd')).reverse(),
         datasets: [
             {
                 data: winRates,
@@ -52,7 +41,7 @@ const ChartStatsScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Win Rate Over Time</Text>
+            <Text style={styles.title}>Profit Over Time</Text>
             <LineChart
                 data={chartData}
                 width={300}
@@ -66,6 +55,7 @@ const ChartStatsScreen: React.FC = () => {
                     labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Black color
                     style: {
                         borderRadius: 16,
+                        width: '100%',
                     },
                 }}
                 bezier
@@ -77,8 +67,9 @@ const ChartStatsScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        padding: 16,
         alignItems: 'center',
+        width:'100%',
     },
     title: {
         fontSize: 20,

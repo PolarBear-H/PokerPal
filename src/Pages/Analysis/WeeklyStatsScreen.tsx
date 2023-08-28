@@ -83,20 +83,22 @@ const WeeklyStatsScreen: React.FC = () => {
         return sortedWeeklyStats;
     };
 
+    const totalProfitColor = (totalProfit: number) => totalProfit > 0 ? 'green' : totalProfit == 0 ? 'gray' : '#DD3E35';
+
     const renderWeeklyStatsItem = ({ item }: { item: WeeklyStats }) => (
         <TouchableOpacity style={styles.statsItem} onPress={() => setShowTotalDuration(!showTotalDuration)}>
             <Text style={styles.statsLabel}>{item.week}</Text>
             <Text style={[
                 styles.statsValue, 
                 styles.totalProfitValue, 
-                { backgroundColor: item.totalProfit >= 0 ? 'green' : 'red' }
+                { backgroundColor: totalProfitColor(item.totalProfit)}
             ]}>
                 ¥{item.totalProfit}
             </Text>
             {showTotalDuration ? (
                 <>
                 <Text style={styles.statsValue}>
-                    {item.totalDuration.toFixed(2)} h
+                    {Utils.getFormettedDuration(item.totalDuration)}
                 </Text>
                 <Text style={styles.statsValue}>
                     {item.totalGames}
@@ -104,10 +106,10 @@ const WeeklyStatsScreen: React.FC = () => {
                 </>
             ) : (
                 <>
-                <Text style={[styles.statsValue, { color: item.totalProfit >= 0 ? 'green' : 'red' }]}>
+                <Text style={[styles.statsValue, { color: totalProfitColor(item.totalProfit) }]}>
                     ¥{item.hourlyProfit.toFixed(2)}
                 </Text>
-                <Text style={[styles.statsValue, { color: item.totalProfit >= 0 ? 'green' : 'red' }]}>
+                <Text style={[styles.statsValue, { color: totalProfitColor(item.totalProfit) }]}>
                     ¥{item.perGameProfit.toFixed(2)}
                 </Text>
                 </>
@@ -119,10 +121,11 @@ const WeeklyStatsScreen: React.FC = () => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerLabel}>Week</Text>
-                <Text style={styles.headerLabel}>Total Profit</Text>
-                <Text style={styles.headerLabel}>{showTotalDuration ? 'Total Duration' : 'Hourly Profit'}</Text>
-                <Text style={styles.headerLabel}>{showTotalDuration ? 'Total Games' : 'Per Games Profit'}</Text>
+                <Text style={styles.headerLabel}>Profit</Text>
+                <Text style={styles.headerLabel}>{showTotalDuration ? 'Duration' : 'Profit/h'}</Text>
+                <Text style={styles.headerLabel}>{showTotalDuration ? 'Sessions' : 'Profit/s'}</Text>
             </View>
+            <View style={styles.separator} />
             <FlatList
                 data={weeklyStats}
                 keyExtractor={(item) => item.week}
@@ -137,10 +140,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
+        borderRadius: 8,
     },
     header: {
         flexDirection: 'row',
         marginBottom: 10,
+        marginTop: 10,
     },
     headerLabel: {
         flex: 1,

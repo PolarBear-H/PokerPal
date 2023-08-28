@@ -69,25 +69,28 @@ const MonthlyStatsScreen: React.FC = () => {
             } else {
                 monthlyStat.hourlyProfit = monthlyStat.totalProfit / (monthlyStat.totalDuration);
             }
+            monthlyStat.perGameProfit = monthlyStat.totalProfit / monthlyStat.totalGames;
         }
 
         return Array.from(monthlyStatsMap.values());
     };
 
+    const totalProfitColor = (totalProfit: number) => totalProfit > 0 ? 'green' : totalProfit == 0 ? 'gray' : '#DD3E35';
+
     const renderMonthlyStatsItem = ({ item }: { item: MonthlyStats }) => (
         <TouchableOpacity style={styles.statsItem} onPress={() => setShowTotalDuration(!showTotalDuration)}>
-            <Text style={styles.statsLabel}>{item.month}</Text>
+            <Text style={styles.statsDateLabel}>{item.month}</Text>
             <Text style={[
                 styles.statsValue, 
                 styles.totalProfitValue, 
-                { backgroundColor: item.totalProfit >= 0 ? 'green' : 'red' }
+                { backgroundColor: totalProfitColor(item.totalProfit) }
             ]}>
                 ¥{item.totalProfit}
             </Text>
             {showTotalDuration ? (
                 <>
                 <Text style={styles.statsValue}>
-                    {item.totalDuration} h
+                    {Utils.getFormettedDuration(item.totalDuration)}
                 </Text>
                 <Text style={styles.statsValue}>
                     {item.totalGames}
@@ -95,10 +98,10 @@ const MonthlyStatsScreen: React.FC = () => {
                 </>
             ) : (
                 <>
-                <Text style={[styles.statsValue, { color: item.hourlyProfit >= 0 ? 'green' : 'red' }]}>
+                <Text style={[styles.statsValue, { color: totalProfitColor(item.totalProfit) }]}>
                     ¥{item.hourlyProfit.toFixed(2)}
                 </Text>
-                <Text style={[styles.statsValue, { color: item.perGameProfit >= 0 ? 'green' : 'red' }]}>
+                <Text style={[styles.statsValue, { color: totalProfitColor(item.totalProfit) }]}>
                     ¥{item.perGameProfit.toFixed(2)}
                 </Text>
                 </>
@@ -110,10 +113,11 @@ const MonthlyStatsScreen: React.FC = () => {
         <View style={styles.container}>
         <View style={styles.header}>
             <Text style={styles.headerLabel}>Month</Text>
-            <Text style={styles.headerLabel}>Total Profit</Text>
-            <Text style={styles.headerLabel}>{showTotalDuration ? 'Total Duration' : 'Hourly Profit'}</Text>
-            <Text style={styles.headerLabel}>{showTotalDuration ? 'Total Games' : 'Per Games Profit'}</Text>
+            <Text style={styles.headerLabel}>Profit</Text>
+            <Text style={styles.headerLabel}>{showTotalDuration ? 'Duration' : 'Profit/h'}</Text>
+            <Text style={styles.headerLabel}>{showTotalDuration ? 'Sessions' : 'Profit/s'}</Text>
         </View>
+        <View style={styles.separator} />
         <FlatList
             data={monthlyStats}
             keyExtractor={(item) => item.month}
@@ -128,6 +132,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
+        borderRadius: 8,
     },
     dataMeaning: {
         fontSize: 16,
@@ -139,6 +144,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         marginBottom: 10,
+        marginTop: 10,
     },
     headerLabel: {
         flex: 1,
@@ -152,6 +158,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 16,
         paddingVertical: 16,
+    },
+    statsDateLabel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'black',
+        flex: 1,
     },
     statsLabel: {
         fontSize: 18,

@@ -12,10 +12,19 @@ const Tab = createMaterialTopTabNavigator();
   
 const StatsTabNavigator = () => {
     return (
-        <Tab.Navigator>
+        <Tab.Navigator
+            screenOptions={{
+                tabBarLabelStyle: { fontSize: 14 }, // Adjust the label font size
+                tabBarStyle: { borderRadius: 8, marginBottom: 4}, // Adjust the tab bar background color
+            }}
+        >
             <Tab.Screen name="Total" component={TotalStatsScreen} />
-            <Tab.Screen name="Monthly" component={MonthlyStatsScreen} />
-            <Tab.Screen name="Weekly" component={WeeklyStatsScreen} />
+            <Tab.Screen 
+                name="Month" 
+                component={MonthlyStatsScreen} 
+                />
+            <Tab.Screen name="Week" component={WeeklyStatsScreen} />
+            <Tab.Screen name="Charts" component={ChartStatsScreen} />
         </Tab.Navigator>
     );
 };
@@ -31,7 +40,8 @@ const StatisticsPage: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        padding: 8,
+        borderRadius: 8,
     },
     heading: {
         fontSize: 20,
