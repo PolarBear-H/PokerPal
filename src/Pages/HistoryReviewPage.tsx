@@ -121,7 +121,7 @@ const HistoryReviewPage: React.FC = () => {
     const handleDelete = (item?: Score) => {
         Alert.alert(
             'Delete Record',
-            'Are you sure you want to delete this record?',
+            'Are you sure you want to delete the record(s)?',
             [
                 {
                     text: 'Cancel',
@@ -162,6 +162,7 @@ const HistoryReviewPage: React.FC = () => {
                 {editMode && (
                     <View style={styles.checkboxContainer}>
                         <CheckBox
+                            style={styles.checkbox}
                             value={selectedItems.includes(item)}
                             onValueChange={() => toggleSelection(item)}
                         />
@@ -169,6 +170,7 @@ const HistoryReviewPage: React.FC = () => {
                 )}
                 <TouchableOpacity
                     style={styles.scoreItem}
+                    disabled={editMode}
                     onPress={() => navigation.navigate('RecordScorePage', { item: item })}
                 >
                     <View style={styles.infoContainer}>
@@ -254,7 +256,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         marginLeft: 8,
         padding: 8,
-        width: '95%',
+        width: '100%',
     },
     dateContainer: {
         flexDirection: 'row',
@@ -355,6 +357,10 @@ const styles = StyleSheet.create({
     },
     checkboxContainer: {
         marginLeft: 8,
+    },
+    checkbox: {
+        width: 20,
+        height: 20,
     },
 });
 
