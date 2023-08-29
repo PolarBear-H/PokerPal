@@ -9,7 +9,6 @@ import { format, getYear } from 'date-fns'; // Import the date-fns library for d
 import Score from '../Components/Score';
 import { useScoreContext } from '../Components/ScoreManager';
 import { Utils } from '../Components/Utils';
-import AntDesign from 'react-native-vector-icons/AntDesign'; 
 import CheckBox from '@react-native-community/checkbox';
 import Localization from '../Components/Localization';
 import { useLanguageContext } from '../Components/LanguageManager';
@@ -18,19 +17,18 @@ const HistoryReviewPage: React.FC = () => {
     const navigation = useNavigation<any>();
     const { scoreHistory, setScoreHistory } = useScoreContext();
     const { language } = useLanguageContext();
-    
-    const [yearTabs, setYearTabs] = useState<string[]>(['All']);
-    const [monthTabs, setMonthTabs] = useState<string[]>(['All']);
+
     const [selectedYear, setSelectedYear] = useState<string>("All");
     const [selectedMonth, setSelectedMonth] = useState<string>("All");
-    const [filteredScores, setFilteredScores] = useState<Score[]>([]);
+
     const [editMode, setEditMode] = useState(false);
     const [selectedItems, setSelectedItems] = useState<Score[]>([]);
 
-    useEffect(() => {
-        generateTabs();
-        getFilteredScores();
+    useEffect(() => {    
     }, [scoreHistory, language]);
+
+    const [yearTabs, monthTabs] = Utils.generateTabs(scoreHistory, selectedYear);
+    const filteredScores = Utils.getFilteredScores(scoreHistory, selectedYear, selectedMonth);
 
     useLayoutEffect(() => {
         if (editMode)  {
@@ -83,35 +81,6 @@ const HistoryReviewPage: React.FC = () => {
             });
         }
     }, [navigation, editMode, selectedItems]);
-
-    const getFilteredScores = () => {
-        const newfilteredScores = scoreHistory.filter(score => {
-            const scoreYear = new Date(score.startDate).getFullYear().toString();
-            const scoreMonth = format(new Date(score.startDate), 'MMM');
-    
-            const yearMatch = selectedYear === 'All' || selectedYear === scoreYear;
-            const monthMatch = selectedMonth === 'All' || selectedMonth === scoreMonth;
-    
-            return yearMatch && monthMatch;
-        });
-
-        setFilteredScores(newfilteredScores);
-    }
-
-    const generateTabs = () => {
-        let newYearTabs = Array.from(new Set(scoreHistory.map((score) => getYear(new Date(score.startDate)).toString())));
-        newYearTabs.unshift('All');
-        setYearTabs(newYearTabs);
-
-        let newMonthTabs = scoreHistory.filter(score => {
-            const scoreYear = new Date(score.startDate).getFullYear().toString();
-            const yearMatch = selectedYear === 'All' || selectedYear === scoreYear;
-            return yearMatch;
-        }).map((score) => format(new Date(score.startDate), 'MMM'));
-        newMonthTabs = Array.from(new Set(newMonthTabs)).reverse();
-        newMonthTabs.unshift('All');
-        setMonthTabs(newMonthTabs);
-    }
         
     const toggleSelection = (item: Score) => {
         if (selectedItems.includes(item)) {
@@ -196,30 +165,20 @@ const HistoryReviewPage: React.FC = () => {
         );
     };  
 
-    // Render the year and month tabs
-    const renderTabs = (tabs: string[], selectedTab: string, setSelectedTab: React.Dispatch<React.SetStateAction<string>>) => {
-        return (
-            <View style={styles.tabContainer}>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {tabs.map(tab => (
-                    <TouchableOpacity
-                        key={tab}
-                        style={[styles.tab, tab === selectedTab && styles.selectedTab]}
-                        onPress={() => setSelectedTab(tab)}
-                    >
-                        <Text style={[styles.tabText, tab === selectedTab && styles.selectedTabText]}>{tab}</Text>
-                    </TouchableOpacity>
-                ))}
-                </ScrollView>
-            </View>
-        );
+    const handleYearTabChange = (selectedYear: string) => {
+        setSelectedYear(selectedYear);
+        setSelectedMonth("All");
+    };
+    
+    const handleMonthTabChange = (selectedMonth: string) => {
+        setSelectedMonth(selectedMonth);
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.outTabContainer}>
-                {renderTabs(yearTabs, selectedYear, setSelectedYear)}
-                {renderTabs(monthTabs, selectedMonth, setSelectedMonth)}
+                {Utils.renderTabs(yearTabs, selectedYear, handleYearTabChange)}
+                {Utils.renderTabs(monthTabs, selectedMonth, handleMonthTabChange)}
             </View>
             <SwipeListView
                 style={styles.flatListContainer} 
