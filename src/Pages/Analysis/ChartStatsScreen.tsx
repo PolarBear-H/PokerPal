@@ -1,46 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, LogBox, ScrollView } from 'react-native';
 import { BarChart, LineChart } from 'react-native-chart-kit';
+import { Rect, Text as TextSVG, Svg, Line, NumberProp } from "react-native-svg";
+
 import { useScoreContext } from '../../Components/ScoreManager';
 import { Utils } from '../../Components/Utils';
 import Score from '../../Components/Score';
 import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const ChartStatsScreen: React.FC = () => {
     LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
 
     const { scoreHistory } = useScoreContext();
-    const [totalProfit, setTotalProfit] = useState<number[]>([0]);
+    //const [totalProfit, setTotalProfit] = useState<number[]>([0]);
+    let [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false, value: 0 })
 
     const [selectedYear, setSelectedYear] = useState<string>("All");
     const [selectedMonth, setSelectedMonth] = useState<string>("All");
 
     const [yearTabs, monthTabs] = Utils.generateTabs(scoreHistory, selectedYear);
     let filteredScores = Utils.getFilteredScores(scoreHistory, selectedYear, selectedMonth).reverse();
+    let totalProfit = Utils.getTotalProfitList(filteredScores);
+
 
     useEffect(() => {
-        if (filteredScores.length > 0) {
-            calculateTotalProfit(filteredScores);
-        }
+        
     }, [scoreHistory]);
 
-    const calculateTotalProfit = (filteredScores: Score[]) => {
-        const totalProfitData: number[] = [];
-        let totalWins = 0;
-        for (const score of filteredScores) {
-            const chipsWon = parseFloat(score.chipsWon);
-            
-            totalWins += chipsWon;
-            totalProfitData.push(totalWins);
-        }
-
-        setTotalProfit(totalProfitData);
+    const handleYearTabChange = (selectedYear: string) => {
+        setSelectedYear(selectedYear);
+        setSelectedMonth("All");
+        filteredScores = Utils.getFilteredScores(scoreHistory, selectedYear, selectedMonth).reverse();
+    };
+    
+    const handleMonthTabChange = (selectedMonth: string) => {
+        setSelectedMonth(selectedMonth);
     };
 
-    const chartData = {
-        labels: Array.from({ length: totalProfit.length }, (_, index) => 1 + index).map(number => number.toString()),
+    const profitData = {
+        labels: filteredScores.map(score => format(new Date(score.startDate), 'M.d')),
         datasets: [
             {
                 data: filteredScores.map(score => parseFloat(score.chipsWon)),
@@ -49,25 +51,42 @@ const ChartStatsScreen: React.FC = () => {
     };
 
     const totalProfitData = {
-        labels: Array.from({ length: totalProfit.length }, (_, index) => 1 + index).map(number => number.toString()),
+        labels: ["0", ...filteredScores.map(score => format(new Date(score.startDate), 'M.d'))],
         datasets: [
             {
-                data: totalProfit,
+                data: [0, ...totalProfit],
             },
+            
         ],
     };
 
-    const handleYearTabChange = (selectedYear: string) => {
-        setSelectedYear(selectedYear);
-        setSelectedMonth("All");
-        filteredScores = Utils.getFilteredScores(scoreHistory, selectedYear, selectedMonth).reverse();
-        calculateTotalProfit(filteredScores); // Recalculate totalProfitData
+    const profitChartConfig = {
+        backgroundColor: 'white',
+        backgroundGradientFrom: 'white',
+        backgroundGradientTo: 'white',
+        decimalPlaces: 0,
+        barPercentage: 10/filteredScores.length,
+        color: (opacity = 0.1) => `rgba(0, 128, 0, ${opacity})`,
+        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Black color
     };
-    
-    const handleMonthTabChange = (selectedMonth: string) => {
-        setSelectedMonth(selectedMonth);
-        calculateTotalProfit(filteredScores); // Recalculate totalProfitData
+
+    const totalProfitChartConfig ={
+        backgroundColor: 'white',
+        backgroundGradientFrom: 'white',
+        backgroundGradientTo: 'white',
+        //fillShadowGradientOpacity: 0.1,
+        decimalPlaces: 0,
+        color: (opacity = 1) => `rgba(0, 128, 0, ${opacity})`, // Green color
+        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Black color
+        //useShadowColorFromDataSet: true,
+        strokeWidth: 3,
+        propsForDots: {
+            r: "3",
+            //strokeWidth: "1",
+            //stroke: "#fff"
+        }
     };
+
 
     return (
         <View style={styles.container}>
@@ -75,54 +94,82 @@ const ChartStatsScreen: React.FC = () => {
                 {Utils.renderTabs(yearTabs, selectedYear, handleYearTabChange)}
                 {Utils.renderTabs(monthTabs, selectedMonth, handleMonthTabChange)}
             </View>
-            <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Profit Over Time</Text>
-            <BarChart
-                data={chartData}
-                width={screenWidth}
-                height={200}
-                yAxisLabel="¥"
-                yAxisSuffix=""
-                chartConfig={{
-                    backgroundColor: 'white',
-                    backgroundGradientFrom: 'white',
-                    backgroundGradientTo: 'white',
-                    decimalPlaces: 2,
-                    color: (opacity = 1) => `rgba(0, 128, 0, ${opacity})`, // Green color
-                    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Black color
-                    style: {
-                        padding: 16,
-                        marginLeft: -16,
-                        width: '80%',
-                    },
-                }}
-                showBarTops={false} // 不显示柱状图的顶部
-                showValuesOnTopOfBars={true} // 在柱状图上显示数值
-                style={{
-                    marginLeft: -16,
-                    borderRadius: 16,
-                }}
-            />
-            </ScrollView>
-            <Text style={styles.title}>Total Profit Over Time</Text>
-            <LineChart
-                data={totalProfitData}
-                width={screenWidth}
-                height={200}
-                chartConfig={{
-                    backgroundColor: 'white',
-                    backgroundGradientFrom: 'white',
-                    backgroundGradientTo: 'white',
-                    decimalPlaces: 2,
-                    color: (opacity = 1) => `rgba(0, 128, 0, ${opacity})`, // Green color
-                    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Black color
-                    style: {
-                        borderRadius: 16,
-                        width: '100%',
-                    },
-                }}
-                bezier
-            />
+            <View style={[styles.chartContainer, {marginBottom:8}]}>
+                <Text style={styles.title}>Profit Over Time</Text>
+                <ScrollView showsHorizontalScrollIndicator={false}>
+                    <BarChart
+                        data={profitData}
+                        width={screenWidth-20}
+                        height={200}
+                        yAxisLabel="¥"
+                        yAxisSuffix=""
+                        chartConfig={profitChartConfig}
+                        showBarTops={false} 
+                        showValuesOnTopOfBars={true}
+                        fromZero={true} 
+                        flatColor={true}
+                        xLabelsOffset={8}
+                        verticalLabelRotation= {280}
+                        style={styles.barChart}
+                        //withCustomBarColorFromData={true}
+                    />
+                </ScrollView>
+            </View>
+            <View style={styles.chartContainer}>
+                <Text style={styles.title}>Total Profit Over Time</Text>
+                <ScrollView showsHorizontalScrollIndicator={false}>
+                    <LineChart
+                        data={totalProfitData}
+                        width={screenWidth-20}
+                        height={200}
+                        yAxisLabel="¥"
+                        chartConfig={totalProfitChartConfig}
+                        style={styles.lineChart}
+                        xLabelsOffset={8} 
+                        fromZero={true} 
+                        verticalLabelRotation= {280}
+                        withShadow={true}
+                        bezier
+                        getDotColor={(dataPoint, dataPointIndex) => {
+                            if (dataPoint < 0) {
+                                return '#DD3E35';
+                            } else if (dataPoint == 0) {
+                                return 'grey';
+                            }
+                                return 'green';
+                            }
+                        }
+                        //renderDotContent={({ x, y, index }) => <Text style={{position: 'absolute', paddingTop: y-20, paddingLeft: x-15,}}>{index}</Text>}
+                        decorator={() => {
+                           
+                            return tooltipPos.visible ? <View>
+                                <Svg>
+                                <TextSVG
+                                    x={tooltipPos.x + 5}
+                                    y={tooltipPos.y - 8}
+                                    fill={tooltipPos.value>0 ? "green" : tooltipPos.value==0 ? "grey" : "#DD3E35"}
+                                    opacity={0.8}
+                                    fontSize="10"
+                                    fontWeight="bold"
+                                    textAnchor="middle">
+                                    {tooltipPos.value}
+                                </TextSVG>
+                                </Svg>
+                            </View> : null
+                        }}
+                        onDataPointClick={(data) => {
+                            let isSamePoint = (tooltipPos.x === data.x && tooltipPos.y === data.y);
+                            isSamePoint ? setTooltipPos((previousState) => {
+                                return { 
+                                        ...previousState,
+                                        value: data.value,
+                                        visible: !previousState.visible
+                                       }
+                            }) : setTooltipPos({ x: data.x, value: data.value, y: data.y, visible: true });
+                        }}
+                    />
+                </ScrollView>
+            </View>
         </View>
     );
 };
@@ -130,9 +177,6 @@ const ChartStatsScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        alignItems: 'center',
-        width:'100%',
     },
     outTabContainer: {
         backgroundColor: 'white',
@@ -140,12 +184,27 @@ const styles = StyleSheet.create({
         paddingLeft: 8,
         paddingRight: 8,
         borderRadius: 8,
-        marginBottom: 4,
+        marginBottom: 8,
+    },
+    chartContainer:{
+        backgroundColor: 'white',
+        flex:1,
+        borderRadius: 8,
+        padding: 8,
+        alignItems: 'center',
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    barChart: {
+        borderRadius: 16,
+    },
+    lineChart: {
+        borderRadius: 16,
     },
 });
 

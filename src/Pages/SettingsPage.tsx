@@ -21,9 +21,9 @@ const SettingsPage = () => {
   };
 
   const handleLanguageChange = (value:any) => {
-    const languageValue = languageMapping[value];
-    Localization.setLanguage(languageValue); // 切换语言
-    setLanguage(languageValue);
+    //const languageValue = languageMapping[value];
+    Localization.setLanguage(value); // 切换语言
+    setLanguage(value);
   };
   
   const handleExportData = () => {
@@ -64,7 +64,7 @@ const SettingsPage = () => {
       <Text style={styles.sectionTitle}>{Localization.language}</Text>
       <View style={styles.sectionContent}>
       <SelectDropdown
-        data={Object.keys(languageMapping)}
+        data={['en', 'zh']}
         defaultValue={language}
         onSelect={(selectedItem: string) => handleLanguageChange(selectedItem)}
         buttonTextAfterSelection={(selectedItem, index) => {

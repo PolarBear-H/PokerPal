@@ -63,7 +63,7 @@ const TotalStatsScreen: React.FC = () => {
         totalWinRate = 0;
     }
 
-    const totalProfitColor = totalProfit > 0 ? 'green' : totalProfit == 0 ? 'grey' : 'red';
+    const totalProfitColor = totalProfit > 0 ? 'green' : totalProfit == 0 ? 'grey' : '#DD3E35';
 
     return (
         <View style={styles.container}>

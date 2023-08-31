@@ -307,7 +307,6 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         padding:8,
         fontSize: 18,
-        marginLeft: 8,
         backgroundColor: 'white', // Set value container background color to white
         textAlign: "right",
     },
@@ -320,7 +319,6 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         padding:8,
         fontSize: 18,
-        marginLeft: 8,
         backgroundColor: 'white', // Set value container background color to white
         textAlign: "right",
     },

@@ -9,7 +9,6 @@ import WeeklyStatsScreen from './Analysis/WeeklyStatsScreen';
 import ChartStatsScreen from './Analysis/ChartStatsScreen';
 import Localization from '../Components/Localization';
 import { useLanguageContext } from '../Components/LanguageManager';
-import ChartStatsScreen1 from './Analysis/ChartStatsScreen1';
 
 const Tab = createMaterialTopTabNavigator();
   

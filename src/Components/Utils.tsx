@@ -41,6 +41,18 @@ export class Utils {
         return totalProfit;
     };
 
+    public static getTotalProfitList(scoreHistory: Score[]) {
+        const totalProfitData: number[] = [];
+        let totalProfit = 0;
+        for (const score of scoreHistory) {
+            const chipsWon = parseFloat(score.chipsWon);
+            totalProfit += chipsWon;
+            totalProfitData.push(totalProfit);
+        }
+
+        return totalProfitData;
+    };
+
     public static getFilteredScores(scoreHistory: Score[], selectedYear: string, selectedMonth: string) {
         const newfilteredScores = scoreHistory.filter(score => {
             const scoreYear = new Date(score.startDate).getFullYear().toString();
