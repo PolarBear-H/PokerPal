@@ -5,18 +5,20 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
-import { format, getYear } from 'date-fns'; // Import the date-fns library for date formatting
+import { format, getYear, set } from 'date-fns'; // Import the date-fns library for date formatting
 import Score from '../Components/Score';
 import { useScoreContext } from '../Components/ScoreManager';
 import { Utils } from '../Components/Utils';
 import CheckBox from '@react-native-community/checkbox';
 import Localization from '../Components/Localization';
 import { useLanguageContext } from '../Components/LanguageManager';
+import { useCurrencyContext } from '../Components/CurrencyManager';
 
 const HistoryReviewPage: React.FC = () => {
     const navigation = useNavigation<any>();
     const { scoreHistory, setScoreHistory } = useScoreContext();
     const { language } = useLanguageContext();
+    const { currency } = useCurrencyContext();
 
     const [selectedYear, setSelectedYear] = useState<string>("All");
     const [selectedMonth, setSelectedMonth] = useState<string>("All");
@@ -24,7 +26,7 @@ const HistoryReviewPage: React.FC = () => {
     const [editMode, setEditMode] = useState(false);
     const [selectedItems, setSelectedItems] = useState<Score[]>([]);
 
-    useEffect(() => {    
+    useEffect(() => { 
     }, [scoreHistory, language]);
 
     const [yearTabs, monthTabs] = Utils.generateTabs(scoreHistory, selectedYear);
@@ -156,7 +158,7 @@ const HistoryReviewPage: React.FC = () => {
                     </View>
                     <View style={styles.infoRightContainer}>
                         <Text style={[styles.profitText, { color: profitColor }]}>
-                            ¥ {item.chipsWon.toFixed(2)}
+                            {currency} {item.chipsWon.toFixed(2)}
                         </Text>
                         <Ionicons name="chevron-forward" size={24} color="#C5C6CA" />
                     </View>
@@ -200,7 +202,7 @@ const HistoryReviewPage: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 12,
+        padding: 8,
     },
     itemContainer: {
         flex: 1,

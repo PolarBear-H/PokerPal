@@ -128,13 +128,6 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-			);
-			name = Libraries;
-			sourceTree = "<group>";
-		};
-		83CBB9F61A601CBA00E9B192 = {
-			isa = PBXGroup;
-			children = (
 				E1A8D59A2A93C42600C4DA29 /* AntDesign.ttf */,
 				E1A8D5942A93C42600C4DA29 /* Entypo.ttf */,
 				E1A8D5992A93C42600C4DA29 /* EvilIcons.ttf */,
@@ -154,6 +147,13 @@
 				E1A8D58A2A93C42600C4DA29 /* Octicons.ttf */,
 				E1A8D5962A93C42600C4DA29 /* SimpleLineIcons.ttf */,
 				E1A8D5912A93C42600C4DA29 /* Zocial.ttf */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		83CBB9F61A601CBA00E9B192 = {
+			isa = PBXGroup;
+			children = (
 				13B07FAE1A68108700A75B9A /* PokerPal */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* PokerPalTests */,

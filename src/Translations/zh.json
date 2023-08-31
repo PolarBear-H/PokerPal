@@ -44,6 +44,11 @@
     "sessionUpdateMessage": "牌局记录更新成功。",
     "sessionAddMessage": "牌局记录添加成功。",
     "hour": "小时",
-    "minute": "分钟"
+    "minute": "分钟",
+    "currency": "货币",
+    "data": "数据",
+    "exportData": "导出数据",
+    "importData": "导入数据",
+    "import": "导入"
 }
   

@@ -11,16 +11,38 @@ import { Image, LogBox, TouchableHighlight, View } from 'react-native';
 import { ScoreProvider, useScoreContext } from './Components/ScoreManager';
 import { Utils } from './Components/Utils';
 import FlashMessage from 'react-native-flash-message';
-import { LanguageProvider } from './Components/LanguageManager';
+import { LanguageProvider, useLanguageContext } from './Components/LanguageManager';
+import ImportDataPage from './Pages/Others/ImportDataPage';
+import { CurrencyProvider, useCurrencyContext } from './Components/CurrencyManager';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Localization from './Components/Localization';
 
 const RootStack = createStackNavigator();
 
 const Main = () => {
   const { setScoreHistory } = useScoreContext();
+  const {setLanguage} = useLanguageContext();
+  const {setCurrency} = useCurrencyContext();
 
   useEffect(() => {
     Utils.fetchScoreHistory(setScoreHistory);
+    getSavedPrefs();
   }, []);
+
+  // Retrieve the saved preferences
+  const getSavedPrefs = async () => {
+    const currency = await AsyncStorage.getItem('currency');
+    const language = await AsyncStorage.getItem('language');
+
+    if (currency) {
+      setCurrency(currency);
+    }
+
+    if (language) {
+      Localization.setLanguage(language);
+      setLanguage(language);
+  }
+}
 
   return (
     <>
@@ -48,6 +70,13 @@ const Main = () => {
             headerTitle: 'Record Score',
          })} 
         />
+        <RootStack.Screen 
+          name="ImportDataPage" 
+          component={ImportDataPage} 
+          options={({ route, navigation }) => ({
+            headerTitle: 'Import Data',
+         })} 
+        />
       </RootStack.Navigator>
     </NavigationContainer>
     <FlashMessage position="top" statusBarHeight={64} />
@@ -59,9 +88,11 @@ export default function App() {
   return (
       <SafeAreaProvider>
         <LanguageProvider>
-          <ScoreProvider>
-            <Main />
-          </ScoreProvider>
+          <CurrencyProvider>
+            <ScoreProvider>
+              <Main />
+            </ScoreProvider>
+          </CurrencyProvider>
         </LanguageProvider>
       </SafeAreaProvider>
   );

@@ -13,12 +13,14 @@ import { format } from 'date-fns';
 import { useScoreContext } from '../Components/ScoreManager';
 import { Utils } from '../Components/Utils';
 import Localization from '../Components/Localization';
+import { useCurrencyContext } from '../Components/CurrencyManager';
 
 
 const RecordScorePage: React.FC = () => {
     LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
 
     const navigation = useNavigation<any>();
+    const { currency } = useCurrencyContext();
     const route = useRoute(); // Get the route object
 
     let scoreData: any;
@@ -44,7 +46,16 @@ const RecordScorePage: React.FC = () => {
     const [showTimePicker, setShowTimePicker] = useState(false);
     const { scoreHistory, setScoreHistory } = useScoreContext(); // Use the context
 
-    const blindLever = ["¥1/¥1", "¥1/¥2", "¥3/¥5", "¥5/¥10", "¥10/¥20", "¥25/¥50", "¥50/¥100", "¥100/¥200"]
+    const blindLever = [
+        `${currency}1/${currency}1`, 
+        `${currency}1/${currency}2`, 
+        `${currency}3/${currency}5`, 
+        `${currency}5/${currency}10`, 
+        `${currency}10/${currency}20`, 
+        `${currency}25/${currency}50`, 
+        `${currency}50/${currency}100`, 
+        `${currency}100/${currency}200`
+    ]
 
     // Calculate the duration in hours
     const durationInHours = (new Date(score.endDate).getTime() - new Date(score.startDate).getTime()) / (1000 * 60 * 60) - score.breakTime;

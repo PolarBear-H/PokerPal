@@ -44,5 +44,10 @@
     "sessionUpdateMessage": "Session record is updated successfully.",
     "sessionAddMessage": "Session record is added successfully.",
     "hour": "h",
-    "minute": "m"
+    "minute": "m",
+    "currency": "Currency",
+    "data": "Data",
+    "exportData": "Export Data",
+    "importData": "Import Data",
+    "import": "Import"
 }

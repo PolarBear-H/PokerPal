@@ -7,6 +7,7 @@ import { useScoreContext } from '../../Components/ScoreManager';
 import { Utils } from '../../Components/Utils';
 import Localization from '../../Components/Localization';
 import { useLanguageContext } from '../../Components/LanguageManager';
+import { useCurrencyContext } from '../../Components/CurrencyManager';
 
 interface MonthlyStats {
     month: string;
@@ -21,6 +22,7 @@ const MonthlyStatsScreen: React.FC = () => {
     const [monthlyStats, setMonthlyStats] = useState<MonthlyStats[]>([]);
     const { scoreHistory } = useScoreContext();
     const { language } = useLanguageContext();
+    const { currency } = useCurrencyContext();
     const [showTotalDuration, setShowTotalDuration] = useState(false); 
 
     useEffect(() => {
@@ -88,7 +90,7 @@ const MonthlyStatsScreen: React.FC = () => {
                 styles.totalProfitValue, 
                 { backgroundColor: totalProfitColor(item.totalProfit) }
             ]}>
-                ¥{item.totalProfit}
+                {currency}{item.totalProfit}
             </Text>
             {showTotalDuration ? (
                 <>
@@ -102,10 +104,10 @@ const MonthlyStatsScreen: React.FC = () => {
             ) : (
                 <>
                 <Text style={[styles.statsValue, { color: totalProfitColor(item.totalProfit) }]}>
-                    ¥{item.hourlyProfit.toFixed(2)}
+                    {currency}{item.hourlyProfit.toFixed(2)}
                 </Text>
                 <Text style={[styles.statsValue, { color: totalProfitColor(item.totalProfit) }]}>
-                    ¥{item.perGameProfit.toFixed(2)}
+                    {currency}{item.perGameProfit.toFixed(2)}
                 </Text>
                 </>
             )}

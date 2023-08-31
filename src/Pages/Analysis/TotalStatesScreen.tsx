@@ -6,6 +6,7 @@ import { Utils } from '../../Components/Utils';
 import Score from '../../Components/Score';
 import Localization from '../../Components/Localization';
 import { useLanguageContext } from '../../Components/LanguageManager';
+import { useCurrencyContext } from '../../Components/CurrencyManager';
 
 const TotalStatsScreen: React.FC = () => {
     const [totalProfit, setTotalProfit] = useState(0);
@@ -14,6 +15,7 @@ const TotalStatsScreen: React.FC = () => {
     const [totalWins, setTotalWins] = useState(0);
     const { scoreHistory } = useScoreContext();
     const { language } = useLanguageContext();
+    const { currency } = useCurrencyContext();
 
     const calculateTotalStats = async (scoreHistory: Score[]) => {
         try {
@@ -76,7 +78,7 @@ const TotalStatsScreen: React.FC = () => {
                 {color: totalProfitColor}
                 ]}
             >
-                ¥{totalProfit.toFixed(2)}
+                {currency}{totalProfit.toFixed(2)}
             </Text>
             </View>
             <View style={styles.separator} />
@@ -88,7 +90,7 @@ const TotalStatsScreen: React.FC = () => {
                 {color: totalProfitColor}
                 ]}
             >
-                ¥{hourlyProfit.toFixed(2)}
+                {currency}{hourlyProfit.toFixed(2)}
             </Text>
             </View>
             <View style={styles.separator} />
@@ -100,7 +102,7 @@ const TotalStatsScreen: React.FC = () => {
                 {color: totalProfitColor}
                 ]}
             >
-                ¥{perHandProfit.toFixed(2)}
+                {currency}{perHandProfit.toFixed(2)}
             </Text>
             </View>
             <View style={styles.separator} />

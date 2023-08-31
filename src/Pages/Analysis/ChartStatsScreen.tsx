@@ -8,6 +8,7 @@ import { Utils } from '../../Components/Utils';
 import Score from '../../Components/Score';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { useCurrencyContext } from '../../Components/CurrencyManager';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -16,11 +17,11 @@ const ChartStatsScreen: React.FC = () => {
     LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
 
     const { scoreHistory } = useScoreContext();
-    //const [totalProfit, setTotalProfit] = useState<number[]>([0]);
-    let [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false, value: 0 })
-
+    const { currency } = useCurrencyContext();
     const [selectedYear, setSelectedYear] = useState<string>("All");
     const [selectedMonth, setSelectedMonth] = useState<string>("All");
+
+    let [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false, value: 0 })
 
     const [yearTabs, monthTabs] = Utils.generateTabs(scoreHistory, selectedYear);
     let filteredScores = Utils.getFilteredScores(scoreHistory, selectedYear, selectedMonth).reverse();
@@ -60,12 +61,15 @@ const ChartStatsScreen: React.FC = () => {
         ],
     };
 
+    //const labelWidth = 23; // Width of each label
+    //const chartWidth = profitData.labels.length * labelWidth;
+
     const profitChartConfig = {
         backgroundColor: 'white',
         backgroundGradientFrom: 'white',
         backgroundGradientTo: 'white',
         decimalPlaces: 0,
-        barPercentage: 10/filteredScores.length,
+        barPercentage: 10/totalProfit.length,
         color: (opacity = 0.1) => `rgba(0, 128, 0, ${opacity})`,
         labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Black color
     };
@@ -99,9 +103,9 @@ const ChartStatsScreen: React.FC = () => {
                 <ScrollView showsHorizontalScrollIndicator={false}>
                     <BarChart
                         data={profitData}
-                        width={screenWidth-20}
+                        width={screenWidth-15}
                         height={200}
-                        yAxisLabel="¥"
+                        yAxisLabel={currency}
                         yAxisSuffix=""
                         chartConfig={profitChartConfig}
                         showBarTops={false} 
@@ -109,6 +113,7 @@ const ChartStatsScreen: React.FC = () => {
                         fromZero={true} 
                         flatColor={true}
                         xLabelsOffset={8}
+                        //yAxisInterval={100}
                         verticalLabelRotation= {280}
                         style={styles.barChart}
                         //withCustomBarColorFromData={true}
@@ -120,9 +125,9 @@ const ChartStatsScreen: React.FC = () => {
                 <ScrollView showsHorizontalScrollIndicator={false}>
                     <LineChart
                         data={totalProfitData}
-                        width={screenWidth-20}
+                        width={screenWidth-15}
                         height={200}
-                        yAxisLabel="¥"
+                        yAxisLabel={currency}
                         chartConfig={totalProfitChartConfig}
                         style={styles.lineChart}
                         xLabelsOffset={8} 
@@ -150,7 +155,6 @@ const ChartStatsScreen: React.FC = () => {
                                     fill={tooltipPos.value>0 ? "green" : tooltipPos.value==0 ? "grey" : "#DD3E35"}
                                     opacity={0.8}
                                     fontSize="10"
-                                    fontWeight="bold"
                                     textAnchor="middle">
                                     {tooltipPos.value}
                                 </TextSVG>
@@ -190,7 +194,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         flex:1,
         borderRadius: 8,
-        padding: 8,
+        paddingTop: 8,
+        paddingRight: 8,
         alignItems: 'center',
     },
     title: {

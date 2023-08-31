@@ -4,6 +4,8 @@ import { format, getYear } from "date-fns";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export class Utils {
+    public static printLog: boolean = false;
+
     // Retrieve score history from AsyncStorage
     public static async fetchScoreHistory(setScoreHistory: React.Dispatch<React.SetStateAction<Score[]>>) {
         try {

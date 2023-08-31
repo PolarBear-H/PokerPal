@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import * as RNLocalize from "react-native-localize";
 
 interface LanguageProps {
   language: string;
@@ -17,7 +18,10 @@ export const useLanguageContext = () => {
 
 // Explicitly define the children prop here
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<string>('en');
+  const locales = RNLocalize.getLocales();
+  const systemLanguage = locales[0]?.languageCode; 
+  const defaultLanguage = systemLanguage ? systemLanguage : 'en';
+  const [language, setLanguage] = useState<string>(defaultLanguage);
   
   return (
     <LanguageContext.Provider value={{ language, setLanguage }}>

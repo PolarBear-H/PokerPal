@@ -32,7 +32,7 @@ const StatsTabNavigator = () => {
 };
 
 const StatisticsPage: React.FC = () => {
-    const {language, setLanguage} = useLanguageContext();
+    const { language } = useLanguageContext();
     
     useEffect(() => {
     }, [language]);

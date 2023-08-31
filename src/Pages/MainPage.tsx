@@ -8,6 +8,7 @@ import { Utils } from '../Components/Utils';
 import { useNavigation } from '@react-navigation/native';
 import Localization from '../Components/Localization';
 import { useLanguageContext } from '../Components/LanguageManager';
+import { useCurrencyContext } from '../Components/CurrencyManager';
 
 const MainPage: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -15,6 +16,7 @@ const MainPage: React.FC = () => {
     const [totalProfit, setTotalProfit] = useState<number>(0);
     const { scoreHistory } = useScoreContext();
     const { language } = useLanguageContext();
+    const { currency } = useCurrencyContext();
 
     useEffect(() => {
         async function fetchRecentGame() {
@@ -38,14 +40,14 @@ const MainPage: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-              <Text style={[styles.totalProfit, { color: totalProfitColor }]}>{Localization.totalProfit}: ¥{totalProfit.toFixed(2)}</Text>
+              <Text style={[styles.totalProfit, { color: totalProfitColor }]}>{Localization.totalProfit}: {currency}{totalProfit.toFixed(2)}</Text>
             </View>
             <View style={styles.content}>
               {recentGame && (
                   <View style={styles.recentGame}>
                       <Text style={styles.recentGameTitle}>{Localization.recentSession}</Text>
                       <Text style={styles.recentGameDetails}>{Localization.date}: {format(new Date(recentGame?.startDate), 'yyyy-MM-dd')}</Text>
-                      <Text style={styles.recentGameDetails}>{Localization.profit}: ¥{recentGame?.chipsWon}</Text>
+                      <Text style={styles.recentGameDetails}>{Localization.profit}: {currency}{recentGame?.chipsWon}</Text>
                       <Text style={styles.recentGameDetails}>{Localization.duration}: {Utils.getFormettedDuration(recentGame?.duration)} </Text>
                   </View>
               )}
