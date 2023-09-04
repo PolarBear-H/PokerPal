@@ -26,6 +26,7 @@
     "react-native-date-picker": "^4.2.14",
     "react-native-device-info": "^10.8.0",
     "react-native-elements": "^3.4.3",
+    "react-native-email-link": "^1.14.6",
     "react-native-flash-message": "^0.4.2",
     "react-native-gesture-handler": "^2.12.1",
     "react-native-localization": "^2.3.2",

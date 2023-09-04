@@ -129,7 +129,7 @@ const HistoryReviewPage: React.FC = () => {
     );
   
     const renderScoreItem = ({ item }: { item: Score }) => {
-        const profitColor = parseFloat(item.chipsWon)>0 ? 'green' : parseFloat(item.chipsWon)==0 ? 'grey' : '#DD3E35';
+        const profitColor = item.chipsWon>0 ? 'green' : item.chipsWon==0 ? 'grey' : '#DD3E35';
 
         return (
             <View style={styles.itemContainer}>

@@ -16,6 +16,8 @@ import ImportDataPage from './Pages/Others/ImportDataPage';
 import { CurrencyProvider, useCurrencyContext } from './Components/CurrencyManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Localization from './Components/Localization';
+import AboutPage from './Pages/Others/AboutPage';
+import ManageBlindPage from './Pages/Others/ManageBlindPage';
 
 const RootStack = createStackNavigator();
 
@@ -25,6 +27,7 @@ const Main = () => {
   const {setCurrency} = useCurrencyContext();
 
   useEffect(() => {
+    Utils.getDefaultValue();
     Utils.fetchScoreHistory(setScoreHistory);
     getSavedPrefs();
   }, []);
@@ -75,6 +78,23 @@ const Main = () => {
           component={ImportDataPage} 
           options={({ route, navigation }) => ({
             headerTitle: 'Import Data',
+            headerTitleStyle: {fontSize: 22},
+         })} 
+        />
+        <RootStack.Screen 
+          name="ManageBlindPage" 
+          component={ManageBlindPage} 
+          options={({ route, navigation }) => ({
+            headerTitle: 'Manage Blind Levels',
+            headerTitleStyle: {fontSize: 22},
+         })} 
+        />
+        <RootStack.Screen 
+          name="AboutPage" 
+          component={AboutPage} 
+          options={({ route, navigation }) => ({
+            headerTitle: 'About',
+            headerTitleStyle: {fontSize: 22},
          })} 
         />
       </RootStack.Navigator>

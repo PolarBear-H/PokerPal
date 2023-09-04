@@ -2,9 +2,20 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Score from "./Score";
 import { format, getYear } from "date-fns";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import BlindLevel from "./BlindLevel";
 
 export class Utils {
-    public static printLog: boolean = false;
+    public static printLog: boolean = true;
+    public static appVersion: string = '1.0.0';
+    public static style: number = 1;
+    public static blindLevelList: BlindLevel[] = [{smallBlind:1, bigBlind:2}, {smallBlind:5, bigBlind:10}, {smallBlind:10, bigBlind:20}, {smallBlind:50, bigBlind:100}];
+
+    // default values
+    public static defaultBreakTime: number = 0;
+    public static defaultBlindLevel: string;
+    public static defaultLocation: string;
+    public static defaultPlayerCount: number;
+    public static defaultBuyIn: number = 0;
 
     // Retrieve score history from AsyncStorage
     public static async fetchScoreHistory(setScoreHistory: React.Dispatch<React.SetStateAction<Score[]>>) {
@@ -34,12 +45,25 @@ export class Utils {
         return durationFormatted;
     };
 
+    public static getFormattedBlindLevel(blindLevel: BlindLevel, currency: string) {
+        return `SB ${currency}${blindLevel.smallBlind} / BB ${currency}${blindLevel.bigBlind}`;
+    }
+
+    public static convertBlindLevelListToStringList(blindLevelList: BlindLevel[], currency: string) {
+        const blindLevelStringList: string[] = [];
+        for (const blindLevel of blindLevelList) {
+            blindLevelStringList.push(Utils.getFormattedBlindLevel(blindLevel, currency));
+        }
+        return blindLevelStringList;
+    }
+
     public static calculateTotalProfit(scoreHistory: Score[]) {
         let totalProfit = 0;
-        scoreHistory.forEach((score:any) => {
-            const chipsWon = parseFloat(score.chipsWon);
+        scoreHistory.forEach((score:Score) => {
+            const chipsWon = score.chipsWon;
             totalProfit += chipsWon;
         });
+
         return totalProfit;
     };
 
@@ -47,7 +71,7 @@ export class Utils {
         const totalProfitData: number[] = [];
         let totalProfit = 0;
         for (const score of scoreHistory) {
-            const chipsWon = parseFloat(score.chipsWon);
+            const chipsWon = score.chipsWon;
             totalProfit += chipsWon;
             totalProfitData.push(totalProfit);
         }
@@ -103,6 +127,35 @@ export class Utils {
             </View>
         );
     };
+
+    public static async getDefaultValue() {
+        let style = await AsyncStorage.getItem('style');
+        let blindLevelList = await AsyncStorage.getItem('blindLevelList');
+
+        let defaultBreakTime = await AsyncStorage.getItem('defaultBreakTime');
+        let defaultBlindLevel = await AsyncStorage.getItem('defaultBlindLevel');
+        let defaultLocation = await AsyncStorage.getItem('defaultLocation');
+        let defaultPlayerCount = await AsyncStorage.getItem('defaultPlayerCount');
+
+        if (style) {
+            Utils.style = parseInt(style);
+        }
+        if (blindLevelList) {
+            Utils.blindLevelList = JSON.parse(blindLevelList);
+        }
+        if (defaultBreakTime) {
+            Utils.defaultBreakTime;
+        }
+        if (defaultBlindLevel) {
+            Utils.defaultBlindLevel = defaultBlindLevel;
+        }
+        if (defaultLocation) {
+            Utils.defaultLocation = defaultLocation;
+        }
+        if (defaultPlayerCount) {
+            Utils.defaultPlayerCount = parseInt(defaultPlayerCount);
+        }
+    }
 }
 
 const styles = StyleSheet.create({

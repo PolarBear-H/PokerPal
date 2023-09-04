@@ -7,19 +7,21 @@ import { useScoreContext } from '../../Components/ScoreManager';
 import { Utils } from '../../Components/Utils';
 import Score from '../../Components/Score';
 import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
 import { useCurrencyContext } from '../../Components/CurrencyManager';
+import { useNavigation } from '@react-navigation/native';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const ChartStatsScreen: React.FC = () => {
     LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
-
+    const navigation = useNavigation<any>();
+    
     const { scoreHistory } = useScoreContext();
     const { currency } = useCurrencyContext();
     const [selectedYear, setSelectedYear] = useState<string>("All");
     const [selectedMonth, setSelectedMonth] = useState<string>("All");
+    const [style, setStyle] = useState<number>(Utils.style);
 
     let [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false, value: 0 })
 
@@ -31,6 +33,11 @@ const ChartStatsScreen: React.FC = () => {
     useEffect(() => {
         
     }, [scoreHistory]);
+
+    navigation.addListener('focus', () => {
+        console.log("ChartStatsScreen focused: " + Utils.style);
+        setStyle(Utils.style);
+      });
 
     const handleYearTabChange = (selectedYear: string) => {
         setSelectedYear(selectedYear);
@@ -46,7 +53,10 @@ const ChartStatsScreen: React.FC = () => {
         labels: filteredScores.map(score => format(new Date(score.startDate), 'M.d')),
         datasets: [
             {
-                data: filteredScores.map(score => parseFloat(score.chipsWon)),
+                data: filteredScores.map(score => score.chipsWon),
+                colors: filteredScores.map((score) =>
+                    score.chipsWon >= 0 ? ((opacity = 1) => `#cce6cc`) : (opacity = 1) => `#fcb4ac`
+                ),
             },
         ],
     };
@@ -70,7 +80,7 @@ const ChartStatsScreen: React.FC = () => {
         backgroundGradientTo: 'white',
         decimalPlaces: 0,
         barPercentage: 10/totalProfit.length,
-        color: (opacity = 0.1) => `rgba(0, 128, 0, ${opacity})`,
+        color: style == 1 ? (opacity = 1) => `rgba(0, 128, 0, ${opacity})` : (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Black color
     };
 
@@ -116,7 +126,7 @@ const ChartStatsScreen: React.FC = () => {
                         //yAxisInterval={100}
                         verticalLabelRotation= {280}
                         style={styles.barChart}
-                        //withCustomBarColorFromData={true}
+                        withCustomBarColorFromData={style == 1 ? false : true}
                     />
                 </ScrollView>
             </View>

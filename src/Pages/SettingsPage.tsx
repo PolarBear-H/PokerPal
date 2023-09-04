@@ -12,6 +12,8 @@ import { useScoreContext } from '../Components/ScoreManager';
 import { useNavigation } from '@react-navigation/native';
 import { Utils } from '../Components/Utils';
 import { useCurrencyContext } from '../Components/CurrencyManager';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { openComposer } from 'react-native-email-link';
 
 const TAG: string = '[SettingsPage]: ';
 
@@ -41,18 +43,23 @@ const SettingsScreen: React.FC = () => {
   };
 
   const currencyOptions = [
-    '¥ - CNY',
     '$ - USD',
+    '¥ - CNY',
     '€ - EUR',
     '£ - GBP'
   ];
 
   const currencyOptionsMapping: { [key: string]: string } = {
-    ['¥']: '¥ - CNY',
     ['$']: '$ - USD',
+    ['¥']: '¥ - CNY',
     ['€']: '€ - EUR',
     ['£']: '£ - GBP'
   };
+
+  const styleOptions = [
+    'Style 1',
+    'Style 2'
+  ]
 
   const handleExportDataHelper = async () => {
     Alert.alert(
@@ -117,6 +124,20 @@ const SettingsScreen: React.FC = () => {
     await AsyncStorage.setItem('currency', value);
   };
 
+  const handleStylesChange = async (value: string) => {
+    let styleCode = 1;
+
+    if (value == 'Style 1') { 
+      styleCode = 1;
+    } else if (value == 'Style 2') {
+      styleCode = 2;
+    }
+
+    if (Utils.printLog) console.log(TAG, 'Styles code is: ' + styleCode);
+    Utils.style = styleCode;
+    await AsyncStorage.setItem('styleCode', styleCode.toString());
+  };
+
   const handleDefaultBlindChange = (value:any) => {
     setDefaultBlind(value);
     // 实现更新默认盲注设置的逻辑
@@ -126,6 +147,18 @@ const SettingsScreen: React.FC = () => {
     setDefaultLocation(value);
     // 实现更新默认地点设置的逻辑
   };
+
+  /**
+    * Send email to report an issue
+    */
+  const ReportIssueViaEmail = () => {
+    if (Utils.printLog) console.log('Send email to TorusPhoneAppAdmin@microsoft.com to report an issue.');
+
+    openComposer({
+      to: `TorusPhoneAppAdmin@microsoft.com`,
+      subject: `Report a Torus Phone App V2 Issue`,
+    });
+}
   
     return (
         <View style={styles.container}>
@@ -206,26 +239,54 @@ const SettingsScreen: React.FC = () => {
 
             {/* 设置默认值 */}
             <View style={styles.itemContainer}>
-              <Text style={styles.title}>Default Values</Text>
-            <TouchableOpacity style={styles.settingItem}>
-                <Text>Default Values</Text>
-                <Icon name="settings-outline" size={24} />
-            </TouchableOpacity>
+              <Text style={styles.title}>Customize</Text>
+              <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('RecordScorePage', {setTemplate: true})}>
+                  <Text>Create template</Text>
+                  <Icon name="settings-outline" size={24} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ManageBlindPage')}>
+                  <Text>Manage blind level</Text>
+                  <FontAwesome5 name="coins" size={24}/>
+              </TouchableOpacity>
+              <SelectDropdown
+                data={styleOptions}
+                onSelect={handleStylesChange}
+                buttonTextAfterSelection={(selectedItem: string) => {
+                    return selectedItem;
+                }}
+                rowTextForSelection={(item: string) => {
+                    return item;
+                }}
+                renderDropdownIcon={(isOpened) => {
+                  return (
+                    <View style={{alignItems:'center', flexDirection:'row'}}>
+                      <Icon name="color-wand-outline" size={24} />
+                      <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#CCC'} size={18} />
+                    </View>
+                  );                  
+                }}
+                defaultValue={styleOptions[Utils.style - 1]}
+                defaultButtonText="Select Chart Style"
+                buttonStyle={styles.dropdownBtnStyle}
+                buttonTextStyle={styles.dropdownBtnTxtStyle}
+                rowStyle={styles.dropdownRowStyle}
+              />
             </View >
  
             {/* 关于软件 */}
             <View style={styles.itemContainer}>
               <Text style={styles.title}>About</Text>
-            <TouchableOpacity style={styles.settingItem}>
+            <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('AboutPage')}>
                 <Text>About</Text>
                 <Icon name="information-circle-outline" size={24} />
             </TouchableOpacity>
 
-            {/* 建议反馈 */}
-            <TouchableOpacity style={styles.settingItem}>
+            {/* 建议反馈 
+            <TouchableOpacity style={styles.settingItem} onPress={() => ReportIssueViaEmail()}>
                 <Text>Feedback</Text>
                 <Icon name="chatbox-outline" size={24} />
             </TouchableOpacity>
+            */}
             </View >
             </ScrollView>
             
@@ -246,15 +307,15 @@ const styles = StyleSheet.create({
       paddingTop: 8,
     },
     title: {
-      fontSize: 20,
+      fontSize: 18,
       fontWeight: 'bold',
-      marginBottom: 16,
+      marginBottom: 8,
     },
     settingItem: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 16,
+      marginBottom: 8,
       paddingVertical: 12,
       paddingHorizontal: 16,
       borderWidth: 1,
@@ -277,7 +338,7 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       borderColor: '#ddd',
       alignItems: 'center',
-      marginBottom: 16,
+      marginBottom: 8,
       paddingVertical: 12,
       paddingHorizontal: 16,
     },

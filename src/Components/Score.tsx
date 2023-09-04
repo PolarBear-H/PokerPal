@@ -1,12 +1,12 @@
 export default interface Score {
     startDate: Date;
     endDate: Date;
-    breakTime: any;
-    duration: any;
+    breakTime: number;
+    duration: number;
     location: string;
-    playerCount: string;
+    playerCount: number | null;
     betUnit: string;
-    buyInAmount: any;
-    remainingBalance: any;
-    chipsWon: any;
+    buyInAmount: number;
+    remainingBalance: number;
+    chipsWon: number;
 }

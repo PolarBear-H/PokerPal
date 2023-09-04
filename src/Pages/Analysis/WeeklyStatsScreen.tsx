@@ -49,7 +49,7 @@ const WeeklyStatsScreen: React.FC = () => {
             if (!weeklyStatsMap.has(weekLabel)) {
                 weeklyStatsMap.set(weekLabel, {
                     week: weekLabel,
-                    totalProfit: parseFloat(score.chipsWon),
+                    totalProfit: score.chipsWon,
                     hourlyProfit: 0,
                     perGameProfit: 0,
                     totalGames: 1,
@@ -59,7 +59,7 @@ const WeeklyStatsScreen: React.FC = () => {
                 const weeklyStat = weeklyStatsMap.get(weekLabel);
 
                 if (weeklyStat) {
-                    weeklyStat.totalProfit += parseFloat(score.chipsWon);
+                    weeklyStat.totalProfit += score.chipsWon;
                     weeklyStat.totalGames += 1;
                     weeklyStat.totalDuration += score.duration;
                 }

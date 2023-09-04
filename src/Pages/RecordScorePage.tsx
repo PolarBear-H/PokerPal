@@ -24,21 +24,23 @@ const RecordScorePage: React.FC = () => {
     const route = useRoute(); // Get the route object
 
     let scoreData: any;
+    let isSetTemplate: any = false;
     if (route && route?.params) {
         scoreData = 'item' in route?.params ? route.params.item : {};
+        isSetTemplate = 'setTemplate' in route?.params ? route.params.setTemplate : false;
     }
 
-    const [score, setScore] = useState<Score>({
-        startDate: scoreData?.startDate || new Date(), // Provide a default value
-        endDate: scoreData?.endDate || new Date(),
-        breakTime: scoreData?.breakTime || 0,
-        duration: scoreData?.duration || 0,
-        location: scoreData?.location || '',
-        playerCount: scoreData?.playerCount || '',
-        betUnit: scoreData?.betUnit || '',
-        buyInAmount: scoreData?.buyInAmount || 0,
-        remainingBalance: scoreData?.remainingBalance || 0,
-        chipsWon: scoreData?.chipsWon || 0,
+    const [score, setScore] = useState<Score>(scoreData ? scoreData :{
+        startDate: new Date(), // Provide a default value
+        endDate: new Date(),
+        breakTime: Utils.defaultBreakTime,
+        duration: 0,
+        location: Utils.defaultLocation,
+        playerCount: Utils.defaultPlayerCount,
+        betUnit: '',
+        buyInAmount: Utils.defaultBuyIn,
+        remainingBalance: 0,
+        chipsWon: 0,
     });
     
     const [showStartDatePicker, setShowStartDatePicker] = useState(false);
@@ -46,16 +48,7 @@ const RecordScorePage: React.FC = () => {
     const [showTimePicker, setShowTimePicker] = useState(false);
     const { scoreHistory, setScoreHistory } = useScoreContext(); // Use the context
 
-    const blindLever = [
-        `${currency}1/${currency}1`, 
-        `${currency}1/${currency}2`, 
-        `${currency}3/${currency}5`, 
-        `${currency}5/${currency}10`, 
-        `${currency}10/${currency}20`, 
-        `${currency}25/${currency}50`, 
-        `${currency}50/${currency}100`, 
-        `${currency}100/${currency}200`
-    ]
+    const playCountOptions = Array.from(Array(9).keys()).map((i) => `${i + 2}`);
 
     // Calculate the duration in hours
     const durationInHours = (new Date(score.endDate).getTime() - new Date(score.startDate).getTime()) / (1000 * 60 * 60) - score.breakTime;
@@ -70,11 +63,11 @@ const RecordScorePage: React.FC = () => {
                 </TouchableOpacity>
             ),
             headerRight: () => (
-                <TouchableOpacity onPress={handleSave}>
+                <TouchableOpacity onPress={() => {isSetTemplate? createTemplate() : handleSave()}}>
                     <Text style={styles.headerButton}>{Localization.save}</Text>
                 </TouchableOpacity>
             ),
-            headerTitle: scoreData ? Localization.sessionRecord : Localization.newRecord,
+            headerTitle: isSetTemplate ? 'Create Template' : scoreData ? Localization.sessionRecord : Localization.newRecord,
             headerTitleStyle: {fontSize: 22},
         });
     }, [navigation, score]);
@@ -108,7 +101,7 @@ const RecordScorePage: React.FC = () => {
                 endDate: new Date(),
                 breakTime: 0,
                 location: '',
-                playerCount: '',
+                playerCount: null,
                 betUnit: '',
                 buyInAmount: 0,
                 remainingBalance: 0,
@@ -134,6 +127,35 @@ const RecordScorePage: React.FC = () => {
             // Alert.alert('Error', 'Failed to save game score');
         }
     };    
+
+    const createTemplate = async () => {
+        if(Utils.printLog) console.log('Create template');
+        if (score.breakTime) {
+            Utils.defaultBreakTime = score.breakTime;
+            await AsyncStorage.setItem('defaultBreakTime', score.breakTime.toString());
+        }
+
+        if (score.location) {
+            Utils.defaultLocation = score.location;
+            await AsyncStorage.setItem('defaultLocation', score.location);
+        }
+
+        if (score.playerCount) {
+            Utils.defaultPlayerCount = score.playerCount;
+            console.log('defaultPlayerCount: ', Utils.defaultPlayerCount);
+            await AsyncStorage.setItem('defaultPlayerCount', score.playerCount.toString());
+        }
+
+        if (score.buyInAmount) {
+            Utils.defaultBuyIn = score.buyInAmount;
+            console.log('defaultPlayerCount: ', Utils.defaultBuyIn);
+            await AsyncStorage.setItem('defaultPlayerCount', score.buyInAmount.toString());
+        }
+
+        if (navigation.canGoBack()) {
+            navigation.goBack();
+        } 
+    };
     
     const renderPropertyRow = (title: string, value: string, onChangeText: (text: any) => void) => {
         const openDatePicker = () => {
@@ -197,8 +219,8 @@ const RecordScorePage: React.FC = () => {
                         <>
                         <TextInput
                             style={styles.propertyValue}
-                            placeholder='0'
-                            placeholderTextColor={'#ccc'}
+                            //placeholder={Utils.defaultBreakTime.toString()}
+                            //placeholderTextColor={'#ccc'}
                             onChangeText={onChangeText}
                             textAlign="right"
                         />
@@ -206,7 +228,7 @@ const RecordScorePage: React.FC = () => {
                         </>
                     ) : (title === Localization.blindLevel) ? (
                         <SelectDropdown
-                            data={blindLever}
+                            data={Utils.convertBlindLevelListToStringList(Utils.blindLevelList, currency)}
                             defaultValue={value}
                             onSelect={(selectedItem: string) => onChangeText(selectedItem)}
                             defaultButtonText={Localization.selectBlindLevel}
@@ -226,10 +248,32 @@ const RecordScorePage: React.FC = () => {
                             rowStyle={styles.dropdownRowStyle}
                             rowTextStyle={styles.dropdownRowTxtStyle}
                         />
+                    ) : (title === Localization.playerCount) ? (
+                        <SelectDropdown
+                            data={playCountOptions}
+                            defaultValue={value}
+                            onSelect={(selectedItem: string) => onChangeText(selectedItem)}
+                            defaultButtonText={'Select Player Count'}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                return selectedItem;
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                return item;
+                            }}
+                            buttonStyle={styles.dropdownBtnStyle}
+                            buttonTextStyle={styles.dropdownBtnTxtStyle}
+                            renderDropdownIcon={isOpened => {
+                                return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#CCC'} size={18} />;
+                            }}
+                            dropdownIconPosition={'right'}
+                            dropdownStyle={styles.dropdownDropdownStyle}
+                            rowStyle={styles.dropdownRowStyle}
+                            rowTextStyle={styles.dropdownRowTxtStyle}
+                        />
                     ) : (
                         <TextInput
                             style={styles.propertyValue}
-                            placeholder={value.toString()}
+                            placeholder={value}
                             placeholderTextColor={'#ccc'}
                             onChangeText={onChangeText}
                             textAlign="right"
@@ -245,7 +289,6 @@ const RecordScorePage: React.FC = () => {
     return (
         <View style={styles.container}>
             <KeyboardAvoidingView
-                style={styles.container}
                 behavior={'position'}
                 keyboardVerticalOffset={50} // Adjust the value as needed
             >
@@ -253,16 +296,28 @@ const RecordScorePage: React.FC = () => {
                     contentContainerStyle={styles.scrollContainer}
                     keyboardShouldPersistTaps="handled"
                 >
-                    {renderPropertyRow(Localization.startTime, new Date(score.startDate).toISOString(), () => {})}
-                    {renderPropertyRow(Localization.endTime, new Date(score.endDate).toISOString(), () => {})}
-                    {renderPropertyRow(Localization.breakTime, score.breakTime, (text) => setScore({ ...score, breakTime: text }))}
-                    {renderPropertyRow(Localization.duration, durationFormatted, () => {})}
-                    {renderPropertyRow(Localization.blindLevel, score.betUnit, (text) => setScore({ ...score, betUnit: text }))}
-                    {renderPropertyRow(Localization.location, score.location, (text) => setScore({ ...score, location: text }))}
-                    {renderPropertyRow(Localization.playerCount, score.playerCount, (text) => setScore({ ...score, playerCount: text }))}
-                    {renderPropertyRow(Localization.buyIn, score.buyInAmount, (text) => setScore({ ...score, buyInAmount: text }))}
-                    {renderPropertyRow(Localization.cashOut, score.remainingBalance, (text) => setScore({ ...score, remainingBalance: text }))}
-                    {renderPropertyRow(Localization.profit, `${score.remainingBalance - score.buyInAmount}`, () => {})}
+                    {isSetTemplate ? (
+                        <>
+                        {renderPropertyRow(Localization.breakTime, score.breakTime?.toString(), (text) => setScore({ ...score, breakTime: text }))}
+                        {renderPropertyRow(Localization.blindLevel, score.betUnit, (text) => setScore({ ...score, betUnit: text }))}
+                        {renderPropertyRow(Localization.location, score.location, (text) => setScore({ ...score, location: text }))}
+                        {renderPropertyRow(Localization.playerCount, String(score.playerCount), (text) => setScore({ ...score, playerCount: text }))}
+                        {renderPropertyRow(Localization.buyIn, score.buyInAmount?.toString(), (text) => setScore({ ...score, buyInAmount: text }))}
+                        </>
+                    ) : (
+                        <>
+                        {renderPropertyRow(Localization.startTime, new Date(score.startDate).toISOString(), () => {})}
+                        {renderPropertyRow(Localization.endTime, new Date(score.endDate).toISOString(), () => {})}
+                        {renderPropertyRow(Localization.breakTime, score.breakTime.toString(), (text) => setScore({ ...score, breakTime: text }))}
+                        {renderPropertyRow(Localization.duration, durationFormatted, () => {})}
+                        {renderPropertyRow(Localization.blindLevel, score.betUnit, (text) => setScore({ ...score, betUnit: text }))}
+                        {renderPropertyRow(Localization.location, score.location, (text) => setScore({ ...score, location: text }))}
+                        {renderPropertyRow(Localization.playerCount, String(score.playerCount), (text) => setScore({ ...score, playerCount: text }))}
+                        {renderPropertyRow(Localization.buyIn, score.buyInAmount.toString(), (text) => setScore({ ...score, buyInAmount: text }))}
+                        {renderPropertyRow(Localization.cashOut, score.remainingBalance.toString(), (text) => setScore({ ...score, remainingBalance: text }))}
+                        {renderPropertyRow(Localization.profit, `${score.remainingBalance - score.buyInAmount}`, () => {})}
+                        </>
+                    )}
                 </ScrollView>
             </KeyboardAvoidingView>
         </View>
@@ -273,6 +328,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        margin: 8,
+        borderRadius: 8,
         backgroundColor: 'white',
     },
     header: {

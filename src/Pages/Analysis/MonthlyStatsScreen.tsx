@@ -49,9 +49,9 @@ const MonthlyStatsScreen: React.FC = () => {
             if (!monthlyStatsMap.has(month)) {
                 monthlyStatsMap.set(month, {
                     month: month,
-                    totalProfit: parseFloat(score.chipsWon),
+                    totalProfit: score.chipsWon,
                     hourlyProfit: 0,
-                    perGameProfit: parseFloat(score.chipsWon),
+                    perGameProfit: score.chipsWon,
                     totalGames: 1,
                     totalDuration: score.duration,
                 });
@@ -59,8 +59,8 @@ const MonthlyStatsScreen: React.FC = () => {
                 const monthlyStat = monthlyStatsMap.get(month);
 
                 if (monthlyStat) {
-                    monthlyStat.totalProfit += parseFloat(score.chipsWon);
-                    monthlyStat.perGameProfit += parseFloat(score.chipsWon);
+                    monthlyStat.totalProfit += score.chipsWon;
+                    monthlyStat.perGameProfit += score.chipsWon;
                     monthlyStat.totalGames += 1;
                     monthlyStat.totalDuration += score.duration;
                 }
