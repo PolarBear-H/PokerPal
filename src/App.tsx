@@ -77,7 +77,7 @@ const Main = () => {
           name="ImportDataPage" 
           component={ImportDataPage} 
           options={({ route, navigation }) => ({
-            headerTitle: 'Import Data',
+            headerTitle: Localization.importData,
             headerTitleStyle: {fontSize: 22},
          })} 
         />
@@ -85,7 +85,7 @@ const Main = () => {
           name="ManageBlindPage" 
           component={ManageBlindPage} 
           options={({ route, navigation }) => ({
-            headerTitle: 'Manage Blind Levels',
+            headerTitle: Localization.manageBlindLevel,
             headerTitleStyle: {fontSize: 22},
          })} 
         />
@@ -93,7 +93,7 @@ const Main = () => {
           name="AboutPage" 
           component={AboutPage} 
           options={({ route, navigation }) => ({
-            headerTitle: 'About',
+            headerTitle: Localization.about,
             headerTitleStyle: {fontSize: 22},
          })} 
         />

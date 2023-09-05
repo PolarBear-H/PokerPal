@@ -29,7 +29,6 @@ const ChartStatsScreen: React.FC = () => {
     let filteredScores = Utils.getFilteredScores(scoreHistory, selectedYear, selectedMonth).reverse();
     let totalProfit = Utils.getTotalProfitList(filteredScores);
 
-
     useEffect(() => {
         
     }, [scoreHistory]);
@@ -37,7 +36,7 @@ const ChartStatsScreen: React.FC = () => {
     navigation.addListener('focus', () => {
         console.log("ChartStatsScreen focused: " + Utils.style);
         setStyle(Utils.style);
-      });
+    });
 
     const handleYearTabChange = (selectedYear: string) => {
         setSelectedYear(selectedYear);

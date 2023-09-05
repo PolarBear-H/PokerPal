@@ -19,25 +19,18 @@ interface WeeklyStats {
 }
 
 const WeeklyStatsScreen: React.FC = () => {
-    const [weeklyStats, setWeeklyStats] = useState<WeeklyStats[]>([]);
     const { scoreHistory } = useScoreContext();
     const { language } = useLanguageContext();
     const { currency } = useCurrencyContext();
+
     const [showTotalDuration, setShowTotalDuration] = useState(false); 
+    const [selectedYear, setSelectedYear] = useState<string>("All");
+    const [selectedMonth, setSelectedMonth] = useState<string>("All");
+
+    const [yearTabs, monthTabs] = Utils.generateTabs(scoreHistory, selectedYear);
+    const filteredScores = Utils.getFilteredScores(scoreHistory, selectedYear, selectedMonth);
 
     useEffect(() => {
-        const fetchData = () => {
-            try {
-                if (scoreHistory) {
-                    const statsByWeek: WeeklyStats[] = calculateWeeklyStats(scoreHistory);
-                    setWeeklyStats(statsByWeek);
-                }
-            } catch (error) {
-                console.error('Error fetching score history:', error);
-            }
-        };
-
-        fetchData();
     }, [scoreHistory, language]);
 
     const calculateWeeklyStats = (scoreHistory: Score[]): WeeklyStats[] => {
@@ -88,6 +81,8 @@ const WeeklyStatsScreen: React.FC = () => {
         return sortedWeeklyStats;
     };
 
+    const statsByWeek: WeeklyStats[] = calculateWeeklyStats(filteredScores);
+
     const totalProfitColor = (totalProfit: number) => totalProfit > 0 ? 'green' : totalProfit == 0 ? 'gray' : '#DD3E35';
 
     const renderWeeklyStatsItem = ({ item }: { item: WeeklyStats }) => (
@@ -122,17 +117,30 @@ const WeeklyStatsScreen: React.FC = () => {
         </TouchableOpacity>
     );
 
+    const handleYearTabChange = (selectedYear: string) => {
+        setSelectedYear(selectedYear);
+        setSelectedMonth("All");
+    };
+    
+    const handleMonthTabChange = (selectedMonth: string) => {
+        setSelectedMonth(selectedMonth);
+    };
+
     return (
         <View style={styles.container}>
+            <View style={styles.outTabContainer}>
+                {Utils.renderTabs(yearTabs, selectedYear, handleYearTabChange)}
+                {Utils.renderTabs(monthTabs, selectedMonth, handleMonthTabChange)}
+            </View>
             <View style={styles.header}>
-            <Text style={styles.headerLabel}>{Localization.month}</Text>
-            <Text style={styles.headerLabel}>{Localization.profit}</Text>
-            <Text style={styles.headerLabel}>{showTotalDuration ? Localization.duration : Localization.hourlyProfitShort}</Text>
-            <Text style={styles.headerLabel}>{showTotalDuration ? Localization.sessions : Localization.SessionAvgProfitShort}</Text>
+                <Text style={styles.headerLabel}>{Localization.month}</Text>
+                <Text style={styles.headerLabel}>{Localization.profit}</Text>
+                <Text style={styles.headerLabel}>{showTotalDuration ? Localization.duration : Localization.hourlyProfitShort}</Text>
+                <Text style={styles.headerLabel}>{showTotalDuration ? Localization.sessions : Localization.SessionAvgProfitShort}</Text>
             </View>
             <View style={styles.separator} />
             <FlatList
-                data={weeklyStats}
+                data={statsByWeek}
                 keyExtractor={(item) => item.week}
                 renderItem={renderWeeklyStatsItem}
                 ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -146,6 +154,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         borderRadius: 8,
+    },
+    outTabContainer: {
+        backgroundColor: 'white',
+        paddingTop: 8,
+        paddingLeft: 8,
+        paddingRight: 8,
+        borderRadius: 8,
+        marginBottom: 4,
     },
     header: {
         flexDirection: 'row',

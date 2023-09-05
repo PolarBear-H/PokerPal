@@ -11,7 +11,7 @@ import { useLanguageContext } from '../Components/LanguageManager';
 import { useCurrencyContext } from '../Components/CurrencyManager';
 
 const MainPage: React.FC = () => {
-  const navigation = useNavigation<any>();
+    const navigation = useNavigation<any>();
     const [recentGame, setRecentGame] = useState<Score|null>(null);
     const [totalProfit, setTotalProfit] = useState<number>(0);
     const { scoreHistory } = useScoreContext();

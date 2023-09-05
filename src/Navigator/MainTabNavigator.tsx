@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Icon } from 'react-native-elements';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MainPage from '../Pages/MainPage';
 import HistoryReviewPage from '../Pages/HistoryReviewPage';
 import StatisticsPage from '../Pages/StatisticsPage';
 import SettingsPage from '../Pages/SettingsPage';
-import { LogBox, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Localization from '../Components/Localization';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,11 +28,11 @@ const MainTabNavigator: React.FC = () => {
                 name="MainPage"
                 component={MainPage}
                 options={{ 
-                    tabBarLabel: 'Home',
+                    tabBarLabel: Localization.home,
                     tabBarIcon: ({ color }) => (
                         <FontAwesome5 name="home" size={24} color={color} />
                     ),
-                    title: 'PokerPal',
+                    title: Localization.pokerPal,
                     headerTitleStyle: {fontSize: 22},
                 }}
             />
@@ -40,11 +40,11 @@ const MainTabNavigator: React.FC = () => {
                 name="HistoryReviewPage"
                 component={HistoryReviewPage}
                 options={{ 
-                    tabBarLabel: 'History',
+                    tabBarLabel: Localization.history,
                     tabBarIcon: ({ color }) => (
                         <FontAwesome5 name="history" size={24} color={color} />
                     ),
-                    title: 'Session History',
+                    title: Localization.sessionHistory,
                     headerTitleStyle: {fontSize: 22},
                 }}
             />
@@ -52,11 +52,11 @@ const MainTabNavigator: React.FC = () => {
                 name="StatisticsPage"
                 component={StatisticsPage}
                 options={{ 
-                    tabBarLabel: 'Analysis' ,
+                    tabBarLabel: Localization.analysis,
                     tabBarIcon: ({ color }) => (
                         <FontAwesome5 name="chart-bar" size={24} color={color} />
                     ),
-                    title: 'Session Analysis',
+                    title: Localization.sessionAnalysis,
                     headerTitleStyle: {fontSize: 22},
                 }}
             />
@@ -64,11 +64,11 @@ const MainTabNavigator: React.FC = () => {
                 name="SettingsPage"
                 component={SettingsPage}
                 options={{ 
-                    tabBarLabel: 'Settings' ,
+                    tabBarLabel: Localization.settings,
                     tabBarIcon: ({ color }) => (
                         <Ionicons name="settings" size={24} color={color} />
                     ),
-                    title: 'Settings',
+                    title: Localization.settings,
                     headerTitleStyle: {fontSize: 22},
                 }}
             />

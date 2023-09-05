@@ -1,5 +1,5 @@
-import React, { useLayoutEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, LogBox, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, LogBox, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
@@ -15,12 +15,13 @@ import { Utils } from '../Components/Utils';
 import Localization from '../Components/Localization';
 import { useCurrencyContext } from '../Components/CurrencyManager';
 
-
 const RecordScorePage: React.FC = () => {
     LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
+    console.log('RecordScorePage: Utils.defaultBreakTime: ', Utils.defaultBreakTime);
 
     const navigation = useNavigation<any>();
     const { currency } = useCurrencyContext();
+    const [shouldUpdate, setShouldUpdate] = useState(false);
     const route = useRoute(); // Get the route object
 
     let scoreData: any;
@@ -30,17 +31,17 @@ const RecordScorePage: React.FC = () => {
         isSetTemplate = 'setTemplate' in route?.params ? route.params.setTemplate : false;
     }
 
-    const [score, setScore] = useState<Score>(scoreData ? scoreData :{
+    const [score, setScore] = useState<Score>(scoreData ? scoreData : {
         startDate: new Date(), // Provide a default value
         endDate: new Date(),
         breakTime: Utils.defaultBreakTime,
         duration: 0,
         location: Utils.defaultLocation,
         playerCount: Utils.defaultPlayerCount,
-        betUnit: '',
+        betUnit: Utils.defaultBlindLevel,
         buyInAmount: Utils.defaultBuyIn,
         remainingBalance: 0,
-        chipsWon: 0,
+        chipsWon: 0 - Utils.defaultBuyIn,
     });
     
     const [showStartDatePicker, setShowStartDatePicker] = useState(false);
@@ -54,7 +55,7 @@ const RecordScorePage: React.FC = () => {
     const durationInHours = (new Date(score.endDate).getTime() - new Date(score.startDate).getTime()) / (1000 * 60 * 60) - score.breakTime;
     const durationFormatted = Utils.getFormettedDuration(durationInHours);
     const chipsWon = score.remainingBalance - score.buyInAmount;;
-    
+
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
@@ -63,8 +64,8 @@ const RecordScorePage: React.FC = () => {
                 </TouchableOpacity>
             ),
             headerRight: () => (
-                <TouchableOpacity onPress={() => {isSetTemplate? createTemplate() : handleSave()}}>
-                    <Text style={styles.headerButton}>{Localization.save}</Text>
+                <TouchableOpacity onPress={() => {isSetTemplate? createTemplate() : scoreData ? handleEdit() : handleSave()}}>
+                    <Text style={styles.headerButton}>{scoreData? Localization.edit : Localization.save}</Text>
                 </TouchableOpacity>
             ),
             headerTitle: isSetTemplate ? 'Create Template' : scoreData ? Localization.sessionRecord : Localization.newRecord,
@@ -72,6 +73,23 @@ const RecordScorePage: React.FC = () => {
         });
     }, [navigation, score]);
 
+    const handleEdit = async () => {
+        Alert.alert(
+            Localization.editTitle,
+            Localization.editMessage,
+            [
+                {
+                    text: Localization.cancel,
+                    style: 'cancel',
+                },
+                {
+                    text: Localization.yes,
+                    style: 'default',
+                    onPress: () => handleSave(),
+                },
+            ]
+        );  
+    }
     const handleSave = async () => {
         try {
             // Update the score history array with the new record
@@ -97,16 +115,16 @@ const RecordScorePage: React.FC = () => {
 
             // Clear the input fields after saving
             setScore({
-                startDate: new Date(),
+                startDate: new Date(), // Provide a default value
                 endDate: new Date(),
-                breakTime: 0,
-                location: '',
-                playerCount: null,
-                betUnit: '',
-                buyInAmount: 0,
-                remainingBalance: 0,
-                chipsWon: 0,
+                breakTime: Utils.defaultBreakTime,
                 duration: 0,
+                location: Utils.defaultLocation,
+                playerCount: Utils.defaultPlayerCount,
+                betUnit: Utils.defaultBlindLevel,
+                buyInAmount: Utils.defaultBuyIn,
+                remainingBalance: 0,
+                chipsWon: 0 - Utils.defaultBuyIn,
             });
 
             // Show a success message
@@ -130,14 +148,23 @@ const RecordScorePage: React.FC = () => {
 
     const createTemplate = async () => {
         if(Utils.printLog) console.log('Create template');
-        if (score.breakTime) {
+        
+        if (score.breakTime || score.breakTime == 0) {
             Utils.defaultBreakTime = score.breakTime;
             await AsyncStorage.setItem('defaultBreakTime', score.breakTime.toString());
+        }
+
+        if (score.betUnit) {
+            Utils.defaultBlindLevel = score.betUnit;
+            await AsyncStorage.setItem('defaultBlindLevel', score.betUnit);
         }
 
         if (score.location) {
             Utils.defaultLocation = score.location;
             await AsyncStorage.setItem('defaultLocation', score.location);
+        } else {
+            Utils.defaultLocation = '';
+            await AsyncStorage.setItem('defaultLocation', Utils.defaultLocation);
         }
 
         if (score.playerCount) {
@@ -146,18 +173,51 @@ const RecordScorePage: React.FC = () => {
             await AsyncStorage.setItem('defaultPlayerCount', score.playerCount.toString());
         }
 
-        if (score.buyInAmount) {
+        if (score.buyInAmount || score.buyInAmount == 0) {
             Utils.defaultBuyIn = score.buyInAmount;
-            console.log('defaultPlayerCount: ', Utils.defaultBuyIn);
-            await AsyncStorage.setItem('defaultPlayerCount', score.buyInAmount.toString());
+            await AsyncStorage.setItem('defaultBuyIn', score.buyInAmount.toString());
         }
 
         if (navigation.canGoBack()) {
             navigation.goBack();
         } 
     };
+
+    const cleanTemplate = async () => {
+        Alert.alert(
+            Localization.cleanTemplate,
+            Localization.cleanTemplateMessage,
+            [
+                {
+                    text: Localization.cancel,
+                    style: 'cancel',
+                },
+                {
+                    text: Localization.yes,
+                    style: 'destructive',
+                    onPress: async () => {
+                        if(Utils.printLog) console.log('Clean template');
+
+                        Utils.defaultBreakTime = 0;
+                        Utils.defaultBlindLevel = '';
+                        Utils.defaultLocation = '';
+                        Utils.defaultPlayerCount = null;
+                        Utils.defaultBuyIn = 0;
+
+                        await AsyncStorage.setItem('defaultBreakTime', Utils.defaultBreakTime.toString());
+                        await AsyncStorage.setItem('defaultBlindLevel', Utils.defaultBlindLevel);
+                        await AsyncStorage.setItem('defaultLocation', Utils.defaultLocation);
+                        await AsyncStorage.setItem('defaultPlayerCount', '');
+                        await AsyncStorage.setItem('defaultBuyIn', Utils.defaultBuyIn.toString());
+
+                        if (navigation.canGoBack()) navigation.goBack();
+                    },
+                },
+            ]
+        );
+    }
     
-    const renderPropertyRow = (title: string, value: string, onChangeText: (text: any) => void) => {
+    const renderPropertyRow = (title: string, value: any, onChangeText: (text: any) => void) => {
         const openDatePicker = () => {
             setShowTimePicker(false);
             if (title === Localization.startTime) {
@@ -209,23 +269,15 @@ const RecordScorePage: React.FC = () => {
                                 setShowStartDatePicker(false);
                                 setShowEndDatePicker(false);
                             }}
+                            confirmText={Localization.confirm}
+                            cancelText={Localization.cancel}
+                            title={Localization.selectDate}
                         />
                         </>
                     ) : (title === Localization.duration || title === Localization.profit) ? (
                         <Text style={styles.propertyValue}>
                             {value.toString()}
                         </Text>
-                    ) : (title === Localization.breakTime) ? (
-                        <>
-                        <TextInput
-                            style={styles.propertyValue}
-                            //placeholder={Utils.defaultBreakTime.toString()}
-                            //placeholderTextColor={'#ccc'}
-                            onChangeText={onChangeText}
-                            textAlign="right"
-                        />
-                        <Text style={{fontSize:18}}> hours</Text>
-                        </>
                     ) : (title === Localization.blindLevel) ? (
                         <SelectDropdown
                             data={Utils.convertBlindLevelListToStringList(Utils.blindLevelList, currency)}
@@ -253,7 +305,7 @@ const RecordScorePage: React.FC = () => {
                             data={playCountOptions}
                             defaultValue={value}
                             onSelect={(selectedItem: string) => onChangeText(selectedItem)}
-                            defaultButtonText={'Select Player Count'}
+                            defaultButtonText={Localization.selectPlayerCount}
                             buttonTextAfterSelection={(selectedItem, index) => {
                                 return selectedItem;
                             }}
@@ -271,13 +323,18 @@ const RecordScorePage: React.FC = () => {
                             rowTextStyle={styles.dropdownRowTxtStyle}
                         />
                     ) : (
+                        <>
                         <TextInput
                             style={styles.propertyValue}
-                            placeholder={value}
+                            defaultValue={(typeof value === "number") ? value.toString() : value}
+                            placeholder={(typeof value === "number") ? value.toString() : ''}
                             placeholderTextColor={'#ccc'}
+                            clearTextOnFocus={(!value || value == 0) ? true : false}
                             onChangeText={onChangeText}
                             textAlign="right"
                         />
+                        {title === Localization.breakTime ? <Text style={{fontSize:18}}> {Localization.hour}</Text> : null}
+                        </>
                     )}  
                     </View>
                 </View>
@@ -298,23 +355,28 @@ const RecordScorePage: React.FC = () => {
                 >
                     {isSetTemplate ? (
                         <>
-                        {renderPropertyRow(Localization.breakTime, score.breakTime?.toString(), (text) => setScore({ ...score, breakTime: text }))}
+                        {renderPropertyRow(Localization.breakTime, score.breakTime, (text) => setScore({ ...score, breakTime: text != '' ? parseFloat(text) : 0}))}
                         {renderPropertyRow(Localization.blindLevel, score.betUnit, (text) => setScore({ ...score, betUnit: text }))}
                         {renderPropertyRow(Localization.location, score.location, (text) => setScore({ ...score, location: text }))}
-                        {renderPropertyRow(Localization.playerCount, String(score.playerCount), (text) => setScore({ ...score, playerCount: text }))}
-                        {renderPropertyRow(Localization.buyIn, score.buyInAmount?.toString(), (text) => setScore({ ...score, buyInAmount: text }))}
+                        {renderPropertyRow(Localization.playerCount, score.playerCount, (text) => setScore({ ...score, playerCount: parseInt(text)}))}
+                        {renderPropertyRow(Localization.buyIn, score.buyInAmount, (text) => setScore({ ...score, buyInAmount: text != '' ? parseFloat(text) : 0}))}
+                        <View style={{alignItems:'center', marginTop:35}}>
+                            <TouchableOpacity style={styles.addButton} onPress={() => cleanTemplate()}>
+                                <Text style={styles.addButtonLabel}>{Localization.cleanTemplate}</Text>
+                            </TouchableOpacity>
+                        </View>
                         </>
                     ) : (
                         <>
-                        {renderPropertyRow(Localization.startTime, new Date(score.startDate).toISOString(), () => {})}
-                        {renderPropertyRow(Localization.endTime, new Date(score.endDate).toISOString(), () => {})}
-                        {renderPropertyRow(Localization.breakTime, score.breakTime.toString(), (text) => setScore({ ...score, breakTime: text }))}
+                        {renderPropertyRow(Localization.startTime, score.startDate, () => {})}
+                        {renderPropertyRow(Localization.endTime, score.endDate, () => {})}
+                        {renderPropertyRow(Localization.breakTime, score.breakTime, (text) => setScore({ ...score, breakTime: text != '' ? parseFloat(text) : 0}))}
                         {renderPropertyRow(Localization.duration, durationFormatted, () => {})}
                         {renderPropertyRow(Localization.blindLevel, score.betUnit, (text) => setScore({ ...score, betUnit: text }))}
                         {renderPropertyRow(Localization.location, score.location, (text) => setScore({ ...score, location: text }))}
-                        {renderPropertyRow(Localization.playerCount, String(score.playerCount), (text) => setScore({ ...score, playerCount: text }))}
-                        {renderPropertyRow(Localization.buyIn, score.buyInAmount.toString(), (text) => setScore({ ...score, buyInAmount: text }))}
-                        {renderPropertyRow(Localization.cashOut, score.remainingBalance.toString(), (text) => setScore({ ...score, remainingBalance: text }))}
+                        {renderPropertyRow(Localization.playerCount, score.playerCount, (text) => setScore({ ...score, playerCount: parseInt(text)}))}
+                        {renderPropertyRow(Localization.buyIn, score.buyInAmount, (text) => setScore({ ...score, buyInAmount: text != '' ? parseFloat(text) : 0}))}
+                        {renderPropertyRow(Localization.cashOut, score.remainingBalance, (text) => setScore({ ...score, remainingBalance: text != '' ? parseFloat(text) : 0}))}
                         {renderPropertyRow(Localization.profit, `${score.remainingBalance - score.buyInAmount}`, () => {})}
                         </>
                     )}
@@ -417,6 +479,20 @@ const styles = StyleSheet.create({
     dropdownRowTxtStyle: {color: 'black', textAlign: 'left'},
     scrollContainer: {
         flexGrow: 1,
+    },
+    addButton: {
+        backgroundColor: '#007AFF',
+        borderRadius: 8,
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '60%',
+    },
+    addButtonLabel: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'white',
     },
 });
 

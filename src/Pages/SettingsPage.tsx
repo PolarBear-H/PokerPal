@@ -239,13 +239,13 @@ const SettingsScreen: React.FC = () => {
 
             {/* 设置默认值 */}
             <View style={styles.itemContainer}>
-              <Text style={styles.title}>Customize</Text>
-              <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('RecordScorePage', {setTemplate: true})}>
-                  <Text>Create template</Text>
+              <Text style={styles.title}>{Localization.customize}</Text>
+              <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('RecordScorePage', {item: null, setTemplate: true})}>
+                  <Text>{Localization.createTemplate}</Text>
                   <Icon name="settings-outline" size={24} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ManageBlindPage')}>
-                  <Text>Manage blind level</Text>
+                  <Text>{Localization.manageBlindLevel}</Text>
                   <FontAwesome5 name="coins" size={24}/>
               </TouchableOpacity>
               <SelectDropdown
@@ -275,9 +275,9 @@ const SettingsScreen: React.FC = () => {
  
             {/* 关于软件 */}
             <View style={styles.itemContainer}>
-              <Text style={styles.title}>About</Text>
+              <Text style={styles.title}>{Localization.about}</Text>
             <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('AboutPage')}>
-                <Text>About</Text>
+                <Text>{Localization.about}</Text>
                 <Icon name="information-circle-outline" size={24} />
             </TouchableOpacity>
 

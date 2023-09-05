@@ -3,6 +3,7 @@ import Score from "./Score";
 import { format, getYear } from "date-fns";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import BlindLevel from "./BlindLevel";
+import Localization from "./Localization";
 
 export class Utils {
     public static printLog: boolean = true;
@@ -14,7 +15,7 @@ export class Utils {
     public static defaultBreakTime: number = 0;
     public static defaultBlindLevel: string;
     public static defaultLocation: string;
-    public static defaultPlayerCount: number;
+    public static defaultPlayerCount: number | null;
     public static defaultBuyIn: number = 0;
 
     // Retrieve score history from AsyncStorage
@@ -41,12 +42,12 @@ export class Utils {
     public static getFormettedDuration(durationInHours: number) {
         const hours = Math.floor(durationInHours);
         const minutes = Math.round((durationInHours - hours) * 60);
-        const durationFormatted = `${hours} h ${minutes} m`;
+        const durationFormatted = `${hours}${Localization.hourShort} ${minutes}${Localization.minuteShort}`;
         return durationFormatted;
     };
 
     public static getFormattedBlindLevel(blindLevel: BlindLevel, currency: string) {
-        return `SB ${currency}${blindLevel.smallBlind} / BB ${currency}${blindLevel.bigBlind}`;
+        return `${Localization.SB} ${currency}${blindLevel.smallBlind} / ${Localization.BB} ${currency}${blindLevel.bigBlind}`;
     }
 
     public static convertBlindLevelListToStringList(blindLevelList: BlindLevel[], currency: string) {
@@ -136,6 +137,7 @@ export class Utils {
         let defaultBlindLevel = await AsyncStorage.getItem('defaultBlindLevel');
         let defaultLocation = await AsyncStorage.getItem('defaultLocation');
         let defaultPlayerCount = await AsyncStorage.getItem('defaultPlayerCount');
+        let defaultBuyIn = await AsyncStorage.getItem('defaultBuyIn');
 
         if (style) {
             Utils.style = parseInt(style);
@@ -144,7 +146,7 @@ export class Utils {
             Utils.blindLevelList = JSON.parse(blindLevelList);
         }
         if (defaultBreakTime) {
-            Utils.defaultBreakTime;
+            Utils.defaultBreakTime = parseFloat(defaultBreakTime);
         }
         if (defaultBlindLevel) {
             Utils.defaultBlindLevel = defaultBlindLevel;
@@ -154,6 +156,9 @@ export class Utils {
         }
         if (defaultPlayerCount) {
             Utils.defaultPlayerCount = parseInt(defaultPlayerCount);
+        }
+        if (defaultBuyIn) {
+            Utils.defaultBuyIn = parseFloat(defaultBuyIn);
         }
     }
 }

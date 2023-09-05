@@ -57,6 +57,7 @@ const ManageBlindPage: React.FC = () => {
             <View style={styles.inputContainer}>
                 <TextInput
                     placeholder="Small Blind"
+                    placeholderTextColor={'#ccc'}
                     style={styles.input}
                     value={newSmallBlind?.toString()}
                     onChangeText={(text) => {
@@ -69,6 +70,7 @@ const ManageBlindPage: React.FC = () => {
                 <Text style={styles.inputText}>/</Text>
                 <TextInput
                     placeholder="Big Blind"
+                    placeholderTextColor={'#ccc'}
                     style={styles.input}
                     value={newBigBlind?.toString()}
                     onChangeText={(text) => {

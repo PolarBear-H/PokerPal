@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import Score from '../../Components/Score';
 import { showMessage } from 'react-native-flash-message';
 import { Utils } from '../../Components/Utils';
+import Localization from '../../Components/Localization';
 
 const ImportDataPage: React.FC = () => {
     const navigation = useNavigation<any>();
@@ -16,7 +17,7 @@ const ImportDataPage: React.FC = () => {
         navigation.setOptions({
             headerRight: () => (
                 <TouchableOpacity onPress={handleImportData}>
-                    <Text style={styles.headerButton}>Import</Text>
+                    <Text style={styles.headerButton}>{Localization.import}</Text>
                 </TouchableOpacity>
             ),
         });
@@ -31,34 +32,34 @@ const ImportDataPage: React.FC = () => {
                 await AsyncStorage.setItem('scoreHistory', importedData);
 
                 Alert.alert(
-                    'Data imported successfully',
-                    'Data imported successfully, you can now go back to the main page to check the data.',
+                    Localization.importSuccess,
+                    Localization.importSuccessMessage,
                         [
                             {
-                                text: 'Ok',
+                                text: Localization.ok,
                                 style: 'cancel',
                             },
                         ]
                 );
 
                 showMessage({
-                    message: 'Data imported successfully',
+                    message: Localization.importSuccess,
                     type: 'success',
                     floating: true,
                 });
             } catch (error: any) {
                 Alert.alert(
-                    'Data imported failed',
+                    Localization.importFail,
                     error.message,
                         [
                             {
-                                text: 'Ok',
+                                text: Localization.ok,
                                 style: 'cancel',
                             },
                         ]
                 );
                 showMessage({
-                    message: 'Data imported failed, please check the format of the input data.',
+                    message: Localization.importFailMessage,
                     type: 'danger',
                     floating: true,
                 });
@@ -77,9 +78,31 @@ const ImportDataPage: React.FC = () => {
                 <TextInput 
                     value={importedData} 
                     onChangeText={(item) => setImportedData(item)} 
+                    placeholder={Localization.importMessage}
+                    placeholderTextColor={'#ccc'}
                     style={styles.inputContainer}
                     multiline 
                 />
+                <View style={styles.instructionsContainer}>
+                    <Text style={styles.instructions}>
+                        {Localization.importTitle}
+                    </Text>
+                    <Text style={styles.step}>
+                        {Localization.importStep1}
+                    </Text>
+                    <Text style={styles.step}>
+                        {Localization.importStep2}
+                    </Text>
+                    <Text style={styles.step}>
+                        {Localization.importStep3}
+                    </Text>
+                    <Text style={styles.step}>
+                        {Localization.importStep4}
+                    </Text>
+                    <Text style={styles.note}>
+                        {Localization.importNote}
+                    </Text>
+                </View>
             </ScrollView>
         </KeyboardAvoidingView>
     </View>
@@ -101,11 +124,31 @@ const styles = StyleSheet.create({
         marginLeft: 16,
     },
     inputContainer: {
-        height: 400,
+        height: 350,
         borderRadius: 8,
         borderColor: '#ccc',
         borderWidth: 1,
-    }
+        marginBottom: 24,
+    },
+    instructionsContainer: {
+        padding: 12,
+        justifyContent: 'center',
+        marginTop: 40,
+        //alignItems: 'center',
+    },
+    instructions: {
+        fontSize: 16,
+        marginBottom: 16,
+    },
+    step: {
+        fontSize: 14,
+        marginBottom: 8,
+    },
+    note: {
+        fontSize: 12,
+        marginTop: 16,
+        color: 'gray',
+    },
 });
 
 export default ImportDataPage;
