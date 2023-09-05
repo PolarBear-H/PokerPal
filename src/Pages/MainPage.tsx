@@ -27,7 +27,7 @@ const MainPage: React.FC = () => {
               }
               setTotalProfit(Utils.calculateTotalProfit(scoreHistory));
             } catch (error) {
-                console.error('Error fetching recent game:', error);
+                if (Utils.printLog) console.error('Error fetching recent game:', error);
             }
         }
 

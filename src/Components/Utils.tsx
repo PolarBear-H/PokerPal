@@ -29,7 +29,7 @@ export class Utils {
                 setScoreHistory([]);
             }
         } catch (error) {
-            console.error('Error fetching score history:', error);
+            if (Utils.printLog) console.error('Error fetching score history:', error);
         }
     };
 

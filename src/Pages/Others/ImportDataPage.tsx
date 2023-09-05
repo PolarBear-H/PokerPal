@@ -31,7 +31,7 @@ const ImportDataPage: React.FC = () => {
     }, [navigation, importedData]);
 
     const handleImportData = async () => {
-        if(Utils.printLog) console.log('importedData: ', importedData);
+        if (Utils.printLog) console.log('importedData: ', importedData);
         if (importedData) {
             try {
                 const newScoreHistory: Score[] = JSON.parse(importedData);

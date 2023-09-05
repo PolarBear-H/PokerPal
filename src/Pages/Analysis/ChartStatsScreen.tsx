@@ -33,7 +33,6 @@ const ChartStatsScreen: React.FC = () => {
     }, [scoreHistory]);
 
     navigation.addListener('focus', () => {
-        console.log("ChartStatsScreen focused: " + Utils.style);
         setStyle(Utils.style);
     });
 

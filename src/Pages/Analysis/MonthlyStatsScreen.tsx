@@ -33,7 +33,7 @@ const MonthlyStatsScreen: React.FC = () => {
                     setMonthlyStats(statsByMonth);
                 }
             } catch (error) {
-                console.error('Error fetching score history:', error);
+                if (Utils.printLog) console.error('Error fetching score history:', error);
             }
         };
 

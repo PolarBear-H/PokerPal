@@ -17,11 +17,9 @@ import { useCurrencyContext } from '../Components/CurrencyManager';
 
 const RecordScorePage: React.FC = () => {
     LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
-    console.log('RecordScorePage: Utils.defaultBreakTime: ', Utils.defaultBreakTime);
 
     const navigation = useNavigation<any>();
     const { currency } = useCurrencyContext();
-    const [shouldUpdate, setShouldUpdate] = useState(false);
     const route = useRoute(); // Get the route object
 
     let scoreData: any;
@@ -169,7 +167,6 @@ const RecordScorePage: React.FC = () => {
 
         if (score.playerCount) {
             Utils.defaultPlayerCount = score.playerCount;
-            console.log('defaultPlayerCount: ', Utils.defaultPlayerCount);
             await AsyncStorage.setItem('defaultPlayerCount', score.playerCount.toString());
         }
 

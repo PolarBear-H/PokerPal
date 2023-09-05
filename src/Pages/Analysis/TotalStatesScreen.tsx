@@ -45,7 +45,7 @@ const TotalStatsScreen: React.FC = () => {
                 await AsyncStorage.setItem('totalProfit', totalProfit.toString());
             }
         } catch (error) {
-            console.error('Error calculating total stats:', error);
+            if (Utils.printLog) console.error('Error calculating total stats:', error);
         }
     };
 
