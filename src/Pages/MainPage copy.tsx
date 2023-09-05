@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useScoreContext } from '../Components/ScoreManager';
 import Score from '../Components/Score';
 import { format } from 'date-fns';
@@ -13,7 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const MainPage: React.FC = () => {
     const navigation = useNavigation<any>();
-    const [recentGame, setRecentGame] = useState<Score|null>(null);
+    const [recentGame, setRecentGame] = useState<Score | null>(null);
     const [totalProfit, setTotalProfit] = useState<number>(0);
     const { scoreHistory } = useScoreContext();
     const { language } = useLanguageContext();
@@ -22,11 +21,11 @@ const MainPage: React.FC = () => {
     useEffect(() => {
         async function fetchRecentGame() {
             try {
-              if (scoreHistory.length > 0) {
-                const mostRecentGame = scoreHistory[0]; // Assuming scoreHistoryData is an array
-                setRecentGame(mostRecentGame);
-              }
-              setTotalProfit(Utils.calculateTotalProfit(scoreHistory));
+                if (scoreHistory.length > 0) {
+                    const mostRecentGame = scoreHistory[0]; // Assuming scoreHistoryData is an array
+                    setRecentGame(mostRecentGame);
+                }
+                setTotalProfit(Utils.calculateTotalProfit(scoreHistory));
             } catch (error) {
                 if (Utils.printLog) console.error('Error fetching recent game:', error);
             }
@@ -39,17 +38,14 @@ const MainPage: React.FC = () => {
     const totalProfitColor = totalProfit > 0 ? 'green' : totalProfit == 0 ? 'black' : '#DD3E35';
 
     return (
-        <View style={styles.container}>
-            
-            <View style={styles.header}>
-              <Text style={[styles.totalProfit, { color: totalProfitColor }]}>{Localization.totalProfit}: {currency}{totalProfit.toFixed(2)}</Text>
-            </View>
-            <ImageBackground
-                source={require('../Assets/background5.png')} 
-                style={styles.backgroundImage}
-                resizeMode="cover"
-                imageStyle={{ opacity: 0.4 }} 
-            >
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={[styles.totalProfit, { color: totalProfitColor }]}>{Localization.totalProfit}: {currency}{totalProfit.toFixed(2)}</Text>
+                </View>
+                <ImageBackground
+                    source={require('../Assets/background1.png')} // 请替换成您的背景图片路径
+                    style={styles.backgroundImage}
+                />
                 <View style={styles.content}>
                     {recentGame && (
                         <View style={styles.recentGame}>
@@ -60,14 +56,17 @@ const MainPage: React.FC = () => {
                             <Text style={styles.recentGameDetails}>{Localization.duration}: {Utils.getFormettedDuration(recentGame?.duration)} </Text>
                         </View>
                     )}
-                </View>      
+                </View>
+                <ImageBackground
+                    source={require('../Assets/background1.png')} // 请替换成您的背景图片路径
+                    style={styles.backgroundImage}
+                />
                 <View style={styles.buttonContent}>
                     <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('RecordScorePage')}>
                         <Text style={styles.addButtonLabel}>{Localization.add}</Text>
                     </TouchableOpacity>
-                </View> 
-            </ImageBackground>
-        </View>
+                </View>     
+            </View>
     );
 };
 
@@ -76,46 +75,53 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'transparent',
+        backgroundColor:'transparent',
     },
     backgroundImage: {
-        flex: 4,
-        width: '100%',
-        height: '100%',
-    },
-    overlay: {
-        flex: 2,
-        //backgroundColor: 'rgba(255, 255, 255, 0.5)', // 添加透明白色覆盖
-        padding: 16,
+        flex: 1,
+        resizeMode: 'cover', // 或 'stretch'
+        width: '100%', 
+        //height: '100%',
+        //opacity: 1, 
     },
     header: {
-        flex: 2,
+        flex: 3,
         justifyContent: 'center',
         alignItems: 'center',
+        //position: 'absolute',
+        //marginTop: 50,
+        //marginBottom: 20,
+        //backgroundColor: 'white',
+        width: '90%',
+        borderRadius: 8,
     },
     totalProfit: {
-        fontSize: 28,
+        fontSize: 26,
         fontWeight: 'bold',
         color: 'green',
     },
     content: {
         flex: 1,
         alignItems: 'center',
+        //position: 'absolute',
         width: '100%',
+        backgroundColor: 'transparent', 
+        overflow: 'visible'
     },
     buttonContent: {
-        flex: 1,
+        flex: 2,
+        marginTop: 100,
         alignItems: 'center',
+        justifyContent: 'center',
     },
     recentGame: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'white',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)', 
         borderRadius: 8,
-        padding: 16,
+        padding: 30,
         marginBottom: 20,
         width: '90%',
-        //position: 'absolute',
     },
     recentGameTitle: {
         fontSize: 18,
