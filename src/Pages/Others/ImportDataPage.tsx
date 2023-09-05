@@ -7,6 +7,7 @@ import Score from '../../Components/Score';
 import { showMessage } from 'react-native-flash-message';
 import { Utils } from '../../Components/Utils';
 import Localization from '../../Components/Localization';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const ImportDataPage: React.FC = () => {
     const navigation = useNavigation<any>();
@@ -15,6 +16,12 @@ const ImportDataPage: React.FC = () => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
+            headerLeft: () => (
+                <TouchableOpacity style={{flexDirection:'row', marginLeft: 8}} onPress={() => navigation.goBack()}>
+                    <Ionicons name="chevron-back" size={24} color='#007AFF'/>
+                    <Text style={styles.headerButton}>{Localization.back}</Text>
+                </TouchableOpacity>
+            ),
             headerRight: () => (
                 <TouchableOpacity onPress={handleImportData}>
                     <Text style={styles.headerButton}>{Localization.import}</Text>
@@ -121,7 +128,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#007AFF', // Set header button color
         marginRight: 16,
-        marginLeft: 16,
+        marginLeft: 4,
     },
     inputContainer: {
         height: 350,

@@ -94,8 +94,8 @@ const HistoryReviewPage: React.FC = () => {
 
     const handleDelete = (item?: Score) => {
         Alert.alert(
-            'Delete Record',
-            'Are you sure you want to delete the record(s)?',
+            Localization.deleteTitle,
+            Localization.deleteMessage,
             [
                 {
                     text: Localization.cancel,
@@ -123,7 +123,7 @@ const HistoryReviewPage: React.FC = () => {
     const renderHiddenItem = (data: any) => (
         <View style={styles.rowBack}>
             <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnRight]} onPress={() => handleDelete(data.item)}>
-                <Text style={styles.backTextWhite}>Delete</Text>
+                <Text style={styles.backTextWhite}>{Localization.delete}</Text>
             </TouchableOpacity>
         </View>
     );
@@ -169,7 +169,7 @@ const HistoryReviewPage: React.FC = () => {
 
     const handleYearTabChange = (selectedYear: string) => {
         setSelectedYear(selectedYear);
-        setSelectedMonth("All");
+        setSelectedMonth(Localization.all);
     };
     
     const handleMonthTabChange = (selectedMonth: string) => {

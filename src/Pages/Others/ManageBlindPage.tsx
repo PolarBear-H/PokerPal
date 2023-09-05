@@ -1,16 +1,31 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import BlindLevel from '../../Components/BlindLevel';
 import { Utils } from '../../Components/Utils';
 import { useCurrencyContext } from '../../Components/CurrencyManager';
+import Localization from '../../Components/Localization';
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const ManageBlindPage: React.FC = () => {
+    const navigation = useNavigation<any>();
     const { currency } = useCurrencyContext();
     
     const [blindLevels, setBlindLevels] = useState<BlindLevel[]>(Utils.blindLevelList);
     const [newSmallBlind, setNewSmallBlind] = useState<number | null>();
     const [newBigBlind, setNewBigBlind] = useState<number | null>();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <TouchableOpacity style={{flexDirection:'row', marginLeft: 8}} onPress={() => navigation.goBack()}>
+                    <Ionicons name="chevron-back" size={24} color='#007AFF'/>
+                    <Text style={styles.headerButton}>{Localization.back}</Text>
+                </TouchableOpacity>
+            ),
+        });
+    }, [navigation]);
 
     const addBlindLevel = async () => {
         if (newSmallBlind && newBigBlind) {
@@ -51,12 +66,12 @@ const ManageBlindPage: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.inputContainer}>
-                <Text style={[styles.title, {flex: 1}]}>Small Blind</Text>
-                <Text style={[styles.title, {flex: 1}]}>Big Blind</Text>
+                <Text style={[styles.title, {flex: 1}]}>{Localization.smallBlind}</Text>
+                <Text style={[styles.title, {flex: 1}]}>{Localization.bigBlind}</Text>
             </View>
             <View style={styles.inputContainer}>
                 <TextInput
-                    placeholder="Small Blind"
+                    placeholder={Localization.smallBlind}
                     placeholderTextColor={'#ccc'}
                     style={styles.input}
                     value={newSmallBlind?.toString()}
@@ -69,7 +84,7 @@ const ManageBlindPage: React.FC = () => {
                 />
                 <Text style={styles.inputText}>/</Text>
                 <TextInput
-                    placeholder="Big Blind"
+                    placeholder={Localization.bigBlind}
                     placeholderTextColor={'#ccc'}
                     style={styles.input}
                     value={newBigBlind?.toString()}
@@ -80,18 +95,18 @@ const ManageBlindPage: React.FC = () => {
                         }}}
                 />
                 <TouchableOpacity style={styles.addButton} onPress={addBlindLevel}>
-                    <Text style={styles.addButtonText}>Add</Text>
+                    <Text style={styles.addButtonText}>{Localization.add}</Text>
                 </TouchableOpacity>
             </View>
-            <Text style={[styles.title, {marginBottom:16}]}>Blind Levels</Text>
+            <Text style={[styles.title, {marginBottom:16}]}>{Localization.blindLevels}</Text>
             <FlatList
                 data={blindLevels}
                 //keyExtractor={(item) => item.level.toString()}
                 renderItem={({ item, index }) => (
                     <View style={styles.levelItem}>
-                        <Text style={styles.levelItemtext}>Level {index + 1}: {Utils.getFormattedBlindLevel(item, currency)}</Text>
+                        <Text style={styles.levelItemtext}>{Localization.level} {index + 1}: {Utils.getFormattedBlindLevel(item, currency)}</Text>
                         <TouchableOpacity onPress={() => removeBlindLevel(item)}>
-                            <Text style={styles.deleteButtonText}>Delete</Text>
+                            <Text style={styles.deleteButtonText}>{Localization.delete}</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -132,6 +147,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 12,
+    },
+    headerButton: {
+        fontSize: 18,
+        color: '#007AFF', // Set header button color
+        marginRight: 16,
+        marginLeft: 4,
     },
     addButtonText: {
         color: 'white',

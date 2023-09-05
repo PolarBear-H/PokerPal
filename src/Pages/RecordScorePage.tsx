@@ -68,7 +68,7 @@ const RecordScorePage: React.FC = () => {
                     <Text style={styles.headerButton}>{scoreData? Localization.edit : Localization.save}</Text>
                 </TouchableOpacity>
             ),
-            headerTitle: isSetTemplate ? 'Create Template' : scoreData ? Localization.sessionRecord : Localization.newRecord,
+            headerTitle: isSetTemplate ? Localization.createTemplate : scoreData ? Localization.sessionRecord : Localization.newRecord,
             headerTitleStyle: {fontSize: 22},
         });
     }, [navigation, score]);

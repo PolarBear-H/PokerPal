@@ -63,7 +63,8 @@
     "yes": "Yes",
     "exportTitle": "Are you sure you want to export the data?",
     "exportMessage": "Please note that all your records data will be exported to the clipboard.",
-    "dataExportSuccess": "Data is exported successfully.",
+    "dataExportSuccess": "Data exported successfully.",
+    "dataExportSuccessMessage": "Data has copied to clipboard.",
     "dataExportFail": "No data to export.",
     "importTitle": "To import your data, please follow these steps:",
     "importStep1": "1. Click \"Export Data\" button to export your data from the previous device, your data will be copied to your clipboard.",
@@ -109,5 +110,7 @@
     "September": "Sep",
     "October": "Oct",
     "November": "Nov",
-    "December": "Dec"
+    "December": "Dec",
+    "deleteTitle": "Delete Record",
+    "deleteMessage": "Are you sure you want to delete the record(s)?"
 }

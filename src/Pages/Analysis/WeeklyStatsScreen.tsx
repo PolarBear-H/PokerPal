@@ -119,7 +119,7 @@ const WeeklyStatsScreen: React.FC = () => {
 
     const handleYearTabChange = (selectedYear: string) => {
         setSelectedYear(selectedYear);
-        setSelectedMonth("All");
+        setSelectedMonth(Localization.all);
     };
     
     const handleMonthTabChange = (selectedMonth: string) => {

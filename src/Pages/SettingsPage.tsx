@@ -63,15 +63,15 @@ const SettingsScreen: React.FC = () => {
 
   const handleExportDataHelper = async () => {
     Alert.alert(
-      'Are you sure you want to export the data?',
-      'Please note that all your records data will be exported to the clipboard.',
+      Localization.exportTitle,
+      Localization.exportMessage,
       [
           {
               text: Localization.cancel,
               style: 'cancel',
           },
           {
-              text: "Yes",
+              text: Localization.yes,
               style: 'default',
               onPress: () => {handleExportData()},    
           },
@@ -85,24 +85,24 @@ const SettingsScreen: React.FC = () => {
       Clipboard.setString(scoreHistory);
 
       Alert.alert(
-        'Data exported successfully',
-            'Data has copied to clipboard.',
-            [
-                {
-                    text: 'Ok',
-                    style: 'cancel',
-                },
-            ]
+        Localization.dataExportSuccess,
+        Localization.dataExportSuccessMessage,
+        [
+            {
+                text: Localization.ok,
+                style: 'cancel',
+            },
+        ]
       );
 
       showMessage({
-        message: 'Data exported successfully',
+        message: Localization.dataExportSuccess,
         type: 'success',
         floating: true,
       });
     } else {
       showMessage({
-        message: 'No data to export',
+        message: Localization.dataExportFail,
         type: 'danger',
         floating: true,
       });
