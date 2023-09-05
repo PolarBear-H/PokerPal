@@ -33,7 +33,7 @@ const MainTabNavigator: React.FC = () => {
                         <FontAwesome5 name="home" size={24} color={color} />
                     ),
                     title: Localization.pokerPal,
-                    headerTitleStyle: {fontSize: 22},
+                    headerTitleStyle: {fontSize: 20},
                 }}
             />
             <Tab.Screen
@@ -45,7 +45,7 @@ const MainTabNavigator: React.FC = () => {
                         <FontAwesome5 name="history" size={24} color={color} />
                     ),
                     title: Localization.sessionHistory,
-                    headerTitleStyle: {fontSize: 22},
+                    headerTitleStyle: {fontSize: 20},
                 }}
             />
             <Tab.Screen
@@ -57,7 +57,7 @@ const MainTabNavigator: React.FC = () => {
                         <FontAwesome5 name="chart-bar" size={24} color={color} />
                     ),
                     title: Localization.sessionAnalysis,
-                    headerTitleStyle: {fontSize: 22},
+                    headerTitleStyle: {fontSize: 20},
                 }}
             />
             <Tab.Screen
@@ -69,7 +69,7 @@ const MainTabNavigator: React.FC = () => {
                         <Ionicons name="settings" size={24} color={color} />
                     ),
                     title: Localization.settings,
-                    headerTitleStyle: {fontSize: 22},
+                    headerTitleStyle: {fontSize: 20},
                 }}
             />
         </Tab.Navigator>

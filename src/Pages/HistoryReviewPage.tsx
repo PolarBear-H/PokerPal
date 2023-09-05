@@ -1,15 +1,15 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import CheckBox from '@react-native-community/checkbox';
+import { format } from 'date-fns'; // Import the date-fns library for date formatting
 
-import { format, getYear, set } from 'date-fns'; // Import the date-fns library for date formatting
 import Score from '../Components/Score';
 import { useScoreContext } from '../Components/ScoreManager';
 import { Utils } from '../Components/Utils';
-import CheckBox from '@react-native-community/checkbox';
 import Localization from '../Components/Localization';
 import { useLanguageContext } from '../Components/LanguageManager';
 import { useCurrencyContext } from '../Components/CurrencyManager';
@@ -26,11 +26,13 @@ const HistoryReviewPage: React.FC = () => {
     const [editMode, setEditMode] = useState(false);
     const [selectedItems, setSelectedItems] = useState<Score[]>([]);
 
-    useEffect(() => { 
-    }, [scoreHistory, language]);
-
     const [yearTabs, monthTabs] = Utils.generateTabs(scoreHistory, selectedYear);
     const filteredScores = Utils.getFilteredScores(scoreHistory, selectedYear, selectedMonth);
+    
+    useEffect(() => { 
+        setSelectedYear(Localization.all);
+        setSelectedMonth(Localization.all);
+    }, [scoreHistory, language]);
 
     useLayoutEffect(() => {
         if (editMode)  {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, TextInput, Button } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Dimensions } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import { showMessage } from 'react-native-flash-message';
 import SelectDropdown from 'react-native-select-dropdown';
@@ -16,16 +16,13 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { openComposer } from 'react-native-email-link';
 
 const TAG: string = '[SettingsPage]: ';
+const screenWidth = Dimensions.get("window").width;
 
 const SettingsScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   
-  const { scoreHistory, setScoreHistory } = useScoreContext();
   const {language, setLanguage} = useLanguageContext();
   const {currency, setCurrency} = useCurrencyContext();
-
-  const [defaultBlind, setDefaultBlind] = useState('');
-  const [defaultLocation, setDefaultLocation] = useState('');
 
   const languageOptions = [
     'English',
@@ -57,8 +54,8 @@ const SettingsScreen: React.FC = () => {
   };
 
   const styleOptions = [
-    'Style 1',
-    'Style 2'
+    Localization.style1,
+    Localization.style2
   ]
 
   const handleExportDataHelper = async () => {
@@ -127,25 +124,15 @@ const SettingsScreen: React.FC = () => {
   const handleStylesChange = async (value: string) => {
     let styleCode = 1;
 
-    if (value == 'Style 1') { 
+    if (value == Localization.style1) { 
       styleCode = 1;
-    } else if (value == 'Style 2') {
+    } else if (value == Localization.style2) {
       styleCode = 2;
     }
 
     if (Utils.printLog) console.log(TAG, 'Styles code is: ' + styleCode);
     Utils.style = styleCode;
     await AsyncStorage.setItem('styleCode', styleCode.toString());
-  };
-
-  const handleDefaultBlindChange = (value:any) => {
-    setDefaultBlind(value);
-    // 实现更新默认盲注设置的逻辑
-  };
-
-  const handleDefaultLocationChange = (value:any) => {
-    setDefaultLocation(value);
-    // 实现更新默认地点设置的逻辑
   };
 
   /**
@@ -171,7 +158,6 @@ const SettingsScreen: React.FC = () => {
               <Text style={styles.title}>{Localization.language}</Text>
               <SelectDropdown
                   data={languageOptions}
-                  defaultValue={languageNameMapping[language]}
                   onSelect={(selectedItem: string) => handleLanguageChange(selectedItem)}
                   buttonTextAfterSelection={(selectedItem, index) => {
                       return selectedItem;
@@ -179,8 +165,6 @@ const SettingsScreen: React.FC = () => {
                   rowTextForSelection={(item, index) => {
                       return item;
                   }}
-                  buttonStyle={styles.dropdownBtnStyle}
-                  buttonTextStyle={styles.dropdownBtnTxtStyle}
                   renderDropdownIcon={(isOpened) => {
                     return (
                       <View style={{alignItems:'center', flexDirection:'row'}}>
@@ -189,7 +173,11 @@ const SettingsScreen: React.FC = () => {
                       </View>
                     );                  
                   }}
-                  dropdownIconPosition={'right'}
+                  defaultValue={languageNameMapping[language]}
+                  defaultButtonText={Localization.selectLanguage}
+                  //dropdownIconPosition={'right'}
+                  buttonStyle={styles.dropdownBtnStyle}
+                  buttonTextStyle={styles.dropdownBtnTxtStyle}
                   dropdownStyle={styles.dropdownDropdownStyle}
                   rowStyle={styles.dropdownRowStyle}
                   rowTextStyle={styles.dropdownRowTxtStyle}
@@ -217,10 +205,12 @@ const SettingsScreen: React.FC = () => {
                   );                  
                 }}
                 defaultValue={currencyOptionsMapping[currency]}
-                defaultButtonText="Select Currency"
+                defaultButtonText={Localization.selectCurrency}
                 buttonStyle={styles.dropdownBtnStyle}
                 buttonTextStyle={styles.dropdownBtnTxtStyle}
+                dropdownStyle={styles.dropdownDropdownStyle}
                 rowStyle={styles.dropdownRowStyle}
+                rowTextStyle={styles.dropdownRowTxtStyle}
               />
             </View >
 
@@ -228,11 +218,11 @@ const SettingsScreen: React.FC = () => {
             <View style={styles.itemContainer}>
               <Text style={styles.title}>{Localization.data}</Text>
               <TouchableOpacity style={styles.settingItem} onPress={handleExportDataHelper}>
-                  <Text>{Localization.exportData}</Text>
+                  <Text style={styles.settingItemText}>{Localization.exportData}</Text>
                   <Icon name="cloud-upload-outline" size={24} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ImportDataPage')}>
-                  <Text>{Localization.importData}</Text>
+                  <Text style={styles.settingItemText}>{Localization.importData}</Text>
                   <Icon name="cloud-download-outline" size={24} />
               </TouchableOpacity>
             </View >
@@ -241,11 +231,11 @@ const SettingsScreen: React.FC = () => {
             <View style={styles.itemContainer}>
               <Text style={styles.title}>{Localization.customize}</Text>
               <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('RecordScorePage', {item: null, setTemplate: true})}>
-                  <Text>{Localization.createTemplate}</Text>
+                  <Text style={styles.settingItemText}>{Localization.createTemplate}</Text>
                   <Icon name="settings-outline" size={24} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('ManageBlindPage')}>
-                  <Text>{Localization.manageBlindLevel}</Text>
+                  <Text style={styles.settingItemText}>{Localization.manageBlindLevel}</Text>
                   <FontAwesome5 name="coins" size={24}/>
               </TouchableOpacity>
               <SelectDropdown
@@ -266,10 +256,12 @@ const SettingsScreen: React.FC = () => {
                   );                  
                 }}
                 defaultValue={styleOptions[Utils.style - 1]}
-                defaultButtonText="Select Chart Style"
+                defaultButtonText={Localization.selectChartStyle}
                 buttonStyle={styles.dropdownBtnStyle}
                 buttonTextStyle={styles.dropdownBtnTxtStyle}
+                dropdownStyle={styles.dropdownDropdownStyle}
                 rowStyle={styles.dropdownRowStyle}
+                rowTextStyle={styles.dropdownRowTxtStyle}
               />
             </View >
  
@@ -277,7 +269,7 @@ const SettingsScreen: React.FC = () => {
             <View style={styles.itemContainer}>
               <Text style={styles.title}>{Localization.about}</Text>
             <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('AboutPage')}>
-                <Text>{Localization.about}</Text>
+                <Text style={styles.settingItemText}>{Localization.about}</Text>
                 <Icon name="information-circle-outline" size={24} />
             </TouchableOpacity>
 
@@ -337,22 +329,32 @@ const styles = StyleSheet.create({
       borderRadius: 8,
       borderWidth: 1,
       borderColor: '#ddd',
-      alignItems: 'center',
       marginBottom: 8,
       paddingVertical: 12,
       paddingHorizontal: 16,
     },
-    dropdownBtnTxtStyle: {color: 'black', textAlign: 'right'},
+    dropdownBtnTxtStyle: {
+      color: 'black', 
+      textAlign: 'left',
+      fontSize: 16,
+    },
     dropdownDropdownStyle: {
+      flex: 1,
       backgroundColor: '#EFEFEF',
       borderRadius: 4,
+      width: '50%',
+      marginLeft: '30%',
+      alignSelf: 'flex-end'
     },
     dropdownRowStyle: {
       backgroundColor: '#EFEFEF', 
       borderBottomColor: '#C5C5C5',
       borderRadius: 4,
     },
-    dropdownRowTxtStyle: {color: 'black', textAlign: 'left'},
+    dropdownRowTxtStyle: {
+      color: 'black', 
+      textAlign: 'left'
+    },
     scrollContainer: {
       flexGrow: 1,
     },
@@ -368,7 +370,11 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       borderColor: '#ddd',
       borderRadius: 8,
-  },
+    },
+    settingItemText: {
+      fontSize: 16,
+      paddingLeft: 8,
+    }
 });
 
 export default SettingsScreen;

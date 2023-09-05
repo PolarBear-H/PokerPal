@@ -80,6 +80,7 @@
     "importFailMessage": "Data imported failed, please check the format of the input data.",
     "home": "Home",
     "pokerPal": "PokerPal♠️",
+    "pokerPalName": "PokerPal",
     "ok": "OK",
     "smallBlind": "Small Blind",
     "bigBlind": "Big Blind",
@@ -112,5 +113,10 @@
     "November": "Nov",
     "December": "Dec",
     "deleteTitle": "Delete Record",
-    "deleteMessage": "Are you sure you want to delete the record(s)?"
+    "deleteMessage": "Are you sure you want to delete the record(s)?",
+    "selectLanguage": "Select Language",
+    "selectCurrency": "Select Currency",
+    "selectChartStyle": "Select Chart Style",
+    "style1": "Style 1",
+    "style2": "Style 2"
 }

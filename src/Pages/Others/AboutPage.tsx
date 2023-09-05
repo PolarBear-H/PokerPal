@@ -1,37 +1,52 @@
 import React, { useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Utils } from '../../Components/Utils';
 import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Localization from '../../Components/Localization';
 
 const AboutPage: React.FC = () => {
     const navigation = useNavigation<any>();
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerRight: () => (
-                <TouchableOpacity>
-                    <Text>Import</Text>
+            headerLeft: () => (
+                <TouchableOpacity style={{flexDirection:'row', marginLeft: 8}} onPress={() => navigation.goBack()}>
+                    <Ionicons name="chevron-back" size={24} color='#007AFF'/>
+                    <Text style={styles.headerButton}>{Localization.back}</Text>
                 </TouchableOpacity>
             ),
         });
     }, [navigation]);
     
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>About Our App</Text>
-            <Text style={styles.version}>Version: {Utils.appVersion}</Text>
-            <Text style={styles.text}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ac ex sit amet velit vehicula condimentum. Sed ultrices velit nec libero tristique, a posuere risus eleifend.
-            </Text>
-            {/* 其他关于应用的文本 */}
-        </ScrollView>
+        <View style={styles.container}>
+            <Image 
+                source={require('../../Assets/icon.png')}
+                style={styles.imageStyle} />
+            <Text style={styles.version}>{Localization.pokerPalName} v{Utils.appVersion}</Text>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        padding: 16,
+        margin: 8,
+        borderRadius: 8,
+        padding: 8,
         alignItems: 'center',
+        backgroundColor: 'white',
+    },
+    imageStyle: {
+        width: 100, 
+        height: 100,
+        marginTop: "50%"
+    },
+    headerButton: {
+        fontSize: 18,
+        color: '#007AFF', // Set header button color
+        marginRight: 16,
+        marginLeft: 4,
     },
     title: {
         fontSize: 24,

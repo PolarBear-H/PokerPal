@@ -78,7 +78,7 @@ const Main = () => {
           component={ImportDataPage} 
           options={({ route, navigation }) => ({
             headerTitle: Localization.importData,
-            headerTitleStyle: {fontSize: 22},
+            headerTitleStyle: {fontSize: 20},
          })} 
         />
         <RootStack.Screen 
@@ -86,7 +86,7 @@ const Main = () => {
           component={ManageBlindPage} 
           options={({ route, navigation }) => ({
             headerTitle: Localization.manageBlindLevel,
-            headerTitleStyle: {fontSize: 22},
+            headerTitleStyle: {fontSize: 20},
          })} 
         />
         <RootStack.Screen 
@@ -94,7 +94,7 @@ const Main = () => {
           component={AboutPage} 
           options={({ route, navigation }) => ({
             headerTitle: Localization.about,
-            headerTitleStyle: {fontSize: 22},
+            headerTitleStyle: {fontSize: 20},
          })} 
         />
       </RootStack.Navigator>

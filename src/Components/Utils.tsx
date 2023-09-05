@@ -104,8 +104,9 @@ export class Utils {
             const scoreYear = new Date(score.startDate).getFullYear().toString();
             const yearMatch = selectedYear === Localization.all || selectedYear === scoreYear;
             return yearMatch;
-        }).map((score) => Utils.monthTransfer(format(new Date(score.startDate), 'MMM')));
+        }).map((score) => format(new Date(score.startDate), 'MMM'));
         newMonthTabs = Array.from(new Set(newMonthTabs)).reverse();
+        newMonthTabs = newMonthTabs.map((month) => Utils.monthTransfer(month));
         newMonthTabs.unshift(Localization.all);
 
         return [newYearTabs, newMonthTabs];

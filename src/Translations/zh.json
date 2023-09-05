@@ -57,7 +57,7 @@
     "customize": "自定义",
     "createTemplate": "创建模板",
     "cleanTemplate": "清除模板",
-    "manageBlindLevel": "管理盲注单位",
+    "manageBlindLevel": "管理盲注",
     "about": "关于",
     "style": "主题",
     "yes": "确认",
@@ -80,6 +80,7 @@
     "importFailMessage": "数据导入失败，请检查输入数据格式是否正确。",
     "home": "主页",
     "pokerPal": "扑克助手♠️",
+    "pokerPalName": "扑克助手",
     "ok": "好的",
     "smallBlind": "小盲",
     "bigBlind": "大盲",
@@ -112,6 +113,11 @@
     "November": "十一月",
     "December": "十二月",
     "deleteTitle": "删除记录",
-    "deleteMessage": "您确定要删除记录吗？"
+    "deleteMessage": "您确定要删除记录吗？",
+    "selectLanguage": "请选择语言",
+    "selectCurrency": "请选择货币",
+    "selectChartStyle": "请选择图表主题",
+    "style1": "主题1",
+    "style2": "主题2"
 }
   

@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, LogBox, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -69,7 +69,7 @@ const RecordScorePage: React.FC = () => {
                 </TouchableOpacity>
             ),
             headerTitle: isSetTemplate ? Localization.createTemplate : scoreData ? Localization.sessionRecord : Localization.newRecord,
-            headerTitleStyle: {fontSize: 22},
+            headerTitleStyle: {fontSize: 20},
         });
     }, [navigation, score]);
 

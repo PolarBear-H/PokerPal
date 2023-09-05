@@ -90,28 +90,28 @@ const ImportDataPage: React.FC = () => {
                     style={styles.inputContainer}
                     multiline 
                 />
-                <View style={styles.instructionsContainer}>
-                    <Text style={styles.instructions}>
-                        {Localization.importTitle}
-                    </Text>
-                    <Text style={styles.step}>
-                        {Localization.importStep1}
-                    </Text>
-                    <Text style={styles.step}>
-                        {Localization.importStep2}
-                    </Text>
-                    <Text style={styles.step}>
-                        {Localization.importStep3}
-                    </Text>
-                    <Text style={styles.step}>
-                        {Localization.importStep4}
-                    </Text>
-                    <Text style={styles.note}>
-                        {Localization.importNote}
-                    </Text>
-                </View>
             </ScrollView>
         </KeyboardAvoidingView>
+        <View style={styles.instructionsContainer}>
+            <Text style={styles.instructions}>
+                {Localization.importTitle}
+            </Text>
+            <Text style={styles.step}>
+                {Localization.importStep1}
+            </Text>
+            <Text style={styles.step}>
+                {Localization.importStep2}
+            </Text>
+            <Text style={styles.step}>
+                {Localization.importStep3}
+            </Text>
+            <Text style={styles.step}>
+                {Localization.importStep4}
+            </Text>
+            <Text style={styles.note}>
+                {Localization.importNote}
+            </Text>
+        </View>
     </View>
   );
 };

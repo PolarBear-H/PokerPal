@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, LogBox, ScrollView } from 'react-native';
 import { BarChart, LineChart } from 'react-native-chart-kit';
-import { Rect, Text as TextSVG, Svg, Line, NumberProp } from "react-native-svg";
+import { Text as TextSVG, Svg } from "react-native-svg";
 
 import { useScoreContext } from '../../Components/ScoreManager';
 import { Utils } from '../../Components/Utils';
-import Score from '../../Components/Score';
 import { format } from 'date-fns';
 import { useCurrencyContext } from '../../Components/CurrencyManager';
 import { useNavigation } from '@react-navigation/native';
 import Localization from '../../Components/Localization';
 
 const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
 
 const ChartStatsScreen: React.FC = () => {
     LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
