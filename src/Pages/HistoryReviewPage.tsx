@@ -20,8 +20,8 @@ const HistoryReviewPage: React.FC = () => {
     const { language } = useLanguageContext();
     const { currency } = useCurrencyContext();
 
-    const [selectedYear, setSelectedYear] = useState<string>("All");
-    const [selectedMonth, setSelectedMonth] = useState<string>("All");
+    const [selectedYear, setSelectedYear] = useState<string>(Localization.all);
+    const [selectedMonth, setSelectedMonth] = useState<string>(Localization.all);
 
     const [editMode, setEditMode] = useState(false);
     const [selectedItems, setSelectedItems] = useState<Score[]>([]);
@@ -150,7 +150,7 @@ const HistoryReviewPage: React.FC = () => {
                     <View style={styles.infoContainer}>
                         <View style={styles.dateContainer}>
                             <Text style={styles.dateText}>{format(new Date(item.startDate), 'yyyy/MM/dd')}</Text>
-                            <Text style={styles.weekdayText}>{Utils.getWeekday(new Date(item.startDate))}</Text>
+                            <Text style={styles.weekdayText}>{Utils.weekTransfer(Utils.getWeekday(new Date(item.startDate)))}</Text>
                         </View>
                         <Text style={styles.infoText}>
                             {Localization.duration}: {Utils.getFormettedDuration(item.duration)}

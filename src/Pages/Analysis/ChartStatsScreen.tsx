@@ -9,6 +9,7 @@ import Score from '../../Components/Score';
 import { format } from 'date-fns';
 import { useCurrencyContext } from '../../Components/CurrencyManager';
 import { useNavigation } from '@react-navigation/native';
+import Localization from '../../Components/Localization';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -19,8 +20,8 @@ const ChartStatsScreen: React.FC = () => {
     
     const { scoreHistory } = useScoreContext();
     const { currency } = useCurrencyContext();
-    const [selectedYear, setSelectedYear] = useState<string>("All");
-    const [selectedMonth, setSelectedMonth] = useState<string>("All");
+    const [selectedYear, setSelectedYear] = useState<string>(Localization.all);
+    const [selectedMonth, setSelectedMonth] = useState<string>(Localization.all);
     const [style, setStyle] = useState<number>(Utils.style);
 
     let [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false, value: 0 })
@@ -108,7 +109,7 @@ const ChartStatsScreen: React.FC = () => {
                 {Utils.renderTabs(monthTabs, selectedMonth, handleMonthTabChange)}
             </View>
             <View style={[styles.chartContainer, {marginBottom:8}]}>
-                <Text style={styles.title}>Profit Over Time</Text>
+                <Text style={styles.title}>{Localization.profitOverTime}</Text>
                 <ScrollView showsHorizontalScrollIndicator={false}>
                     <BarChart
                         data={profitData}
@@ -130,7 +131,7 @@ const ChartStatsScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <View style={styles.chartContainer}>
-                <Text style={styles.title}>Total Profit Over Time</Text>
+                <Text style={styles.title}>{Localization.totalProfitOverTime}</Text>
                 <ScrollView showsHorizontalScrollIndicator={false}>
                     <LineChart
                         data={totalProfitData}

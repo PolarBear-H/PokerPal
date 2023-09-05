@@ -24,8 +24,8 @@ const WeeklyStatsScreen: React.FC = () => {
     const { currency } = useCurrencyContext();
 
     const [showTotalDuration, setShowTotalDuration] = useState(false); 
-    const [selectedYear, setSelectedYear] = useState<string>("All");
-    const [selectedMonth, setSelectedMonth] = useState<string>("All");
+    const [selectedYear, setSelectedYear] = useState<string>(Localization.all);
+    const [selectedMonth, setSelectedMonth] = useState<string>(Localization.all);
 
     const [yearTabs, monthTabs] = Utils.generateTabs(scoreHistory, selectedYear);
     const filteredScores = Utils.getFilteredScores(scoreHistory, selectedYear, selectedMonth);
@@ -87,7 +87,7 @@ const WeeklyStatsScreen: React.FC = () => {
 
     const renderWeeklyStatsItem = ({ item }: { item: WeeklyStats }) => (
         <TouchableOpacity style={styles.statsItem} onPress={() => setShowTotalDuration(!showTotalDuration)}>
-            <Text style={styles.statsLabel}>{item.week}</Text>
+            <Text style={styles.statsLabel}>{Utils.weekTransfer(item.week)}</Text>
             <Text style={[
                 styles.statsValue, 
                 styles.totalProfitValue, 
@@ -133,7 +133,7 @@ const WeeklyStatsScreen: React.FC = () => {
                 {Utils.renderTabs(monthTabs, selectedMonth, handleMonthTabChange)}
             </View>
             <View style={styles.header}>
-                <Text style={styles.headerLabel}>{Localization.month}</Text>
+                <Text style={styles.headerLabel}>{Localization.week}</Text>
                 <Text style={styles.headerLabel}>{Localization.profit}</Text>
                 <Text style={styles.headerLabel}>{showTotalDuration ? Localization.duration : Localization.hourlyProfitShort}</Text>
                 <Text style={styles.headerLabel}>{showTotalDuration ? Localization.sessions : Localization.SessionAvgProfitShort}</Text>

@@ -83,10 +83,12 @@ export class Utils {
     public static getFilteredScores(scoreHistory: Score[], selectedYear: string, selectedMonth: string) {
         const newfilteredScores = scoreHistory.filter(score => {
             const scoreYear = new Date(score.startDate).getFullYear().toString();
-            const scoreMonth = format(new Date(score.startDate), 'MMM');
+            let scoreMonth = format(new Date(score.startDate), 'MMM');
+            
+            scoreMonth = Utils.monthTransfer(scoreMonth);
     
-            const yearMatch = selectedYear === 'All' || selectedYear === scoreYear;
-            const monthMatch = selectedMonth === 'All' || selectedMonth === scoreMonth;
+            const yearMatch = selectedYear === Localization.all || selectedYear === scoreYear;
+            const monthMatch = selectedMonth === Localization.all || selectedMonth === scoreMonth;
     
             return yearMatch && monthMatch;
         });
@@ -96,15 +98,15 @@ export class Utils {
 
     public static generateTabs(scoreHistory: Score[], selectedYear: string) {
         let newYearTabs = Array.from(new Set(scoreHistory.map((score) => getYear(new Date(score.startDate)).toString())));
-        newYearTabs.unshift('All');
+        newYearTabs.unshift(Localization.all);
 
         let newMonthTabs = scoreHistory.filter(score => {
             const scoreYear = new Date(score.startDate).getFullYear().toString();
-            const yearMatch = selectedYear === 'All' || selectedYear === scoreYear;
+            const yearMatch = selectedYear === Localization.all || selectedYear === scoreYear;
             return yearMatch;
-        }).map((score) => format(new Date(score.startDate), 'MMM'));
+        }).map((score) => Utils.monthTransfer(format(new Date(score.startDate), 'MMM')));
         newMonthTabs = Array.from(new Set(newMonthTabs)).reverse();
-        newMonthTabs.unshift('All');
+        newMonthTabs.unshift(Localization.all);
 
         return [newYearTabs, newMonthTabs];
     }
@@ -128,6 +130,58 @@ export class Utils {
             </View>
         );
     };
+
+    public static weekTransfer(week: string) {
+        switch (week) {
+            case "Mon":
+                return Localization.Monday;
+            case "Tue":
+                return Localization.Tuesday;
+            case "Wed":
+                return Localization.Wednesday;
+            case "Thu":
+                return Localization.Thursday;
+            case "Fri":
+                return Localization.Friday;
+            case "Sat":
+                return Localization.Saturday;
+            case "Sun":
+                return Localization.Sunday;
+            default:
+                return Localization.Monday;
+        }
+    }
+
+    public static monthTransfer(month: string) {
+        switch (month) {
+            case "Jan":
+                return Localization.January;
+            case "Feb":
+                return Localization.February;
+            case "Mar":
+                return Localization.March;
+            case "Apr":
+                return Localization.April;
+            case "May":
+                return Localization.May;
+            case "Jun":
+                return Localization.June;
+            case "Jul":
+                return Localization.July;
+            case "Aug":
+                return Localization.August;
+            case "Sep":
+                return Localization.September;
+            case "Oct":
+                return Localization.October;
+            case "Nov":
+                return Localization.November;
+            case "Dec":
+                return Localization.December;
+            default:
+                return Localization.January;
+        }
+    }
 
     public static async getDefaultValue() {
         let style = await AsyncStorage.getItem('style');
